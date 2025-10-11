@@ -1,45 +1,33 @@
-import React, { useState } from "react";
-import { registerUser } from "../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from 'axios';
+import './RegisterForm.css'; // mantém o CSS atual
 
-export default function RegisterForm() {
-  const [form, setForm] = useState({
-    nome: "", email: "", telefone: "", cpf: "", senha: "", confirmSenha: ""
-  });
-  const nav = useNavigate();
+const RegisterForm = () => {
+  const [form, setForm] = useState({ nome:'', email:'', telefone:'', cpf:'' });
+  const [message, setMessage] = useState('');
 
-  async function handleSubmit(e) {
+  const handleChange = e => setForm({...form,[e.target.name]: e.target.value });
+
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (form.senha !== form.confirmSenha) {
-      alert("Senhas não conferem");
-      return;
-    }
-    const res = await registerUser({
-      nome: form.nome,
-      email: form.email,
-      telefone: form.telefone,
-      cpf: form.cpf,
-      senha: form.senha,
-      confirmSenha: form.confirmSenha,
-    });
-    if (res.user) {
-      alert("Cadastro realizado");
-      nav("/login");
-    } else {
-      alert(res.error || "Erro ao cadastrar");
+    try {
+      const res = await axios.post('https://backend-poolmarket.onrender.com/users/register', form);
+      setMessage(res.data.message);
+    } catch(err) {
+      setMessage(err.response?.data?.message || 'Erro no cadastro');
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="center">Cadastro</h2>
-      <input placeholder="Nome completo" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} required />
-      <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-      <input placeholder="Telefone" value={form.telefone} onChange={e => setForm({ ...form, telefone: e.target.value })} />
-      <input placeholder="CPF" value={form.cpf} onChange={e => setForm({ ...form, cpf: e.target.value })} required />
-      <input type="password" placeholder="Senha" value={form.senha} onChange={e => setForm({ ...form, senha: e.target.value })} required />
-      <input type="password" placeholder="Confirmar senha" value={form.confirmSenha} onChange={e => setForm({ ...form, confirmSenha: e.target.value })} required />
+    <form className="register-form" onSubmit={handleSubmit}>
+      <input name="nome" value={form.nome} onChange={handleChange} placeholder="Nome" required/>
+      <input name="email" value={form.email} onChange={handleChange} placeholder="Email" required/>
+      <input name="telefone" value={form.telefone} onChange={handleChange} placeholder="Telefone" required/>
+      <input name="cpf" value={form.cpf} onChange={handleChange} placeholder="CPF" required/>
       <button type="submit">Cadastrar</button>
+      <p className="form-message">{message}</p>
     </form>
-  );
+  )
 }
+
+export default RegisterForm;
