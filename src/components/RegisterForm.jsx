@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './RegisterForm.css'; // mantém o CSS atual
 
 const RegisterForm = () => {
   const [form, setForm] = useState({ nome:'', email:'', telefone:'', cpf:'' });

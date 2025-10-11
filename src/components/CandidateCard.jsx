@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './CandidateCard.css'; // mantém o CSS atual
 
 const CandidateCard = ({ id, name, photo }) => {
   const [votes, setVotes] = useState(0);
