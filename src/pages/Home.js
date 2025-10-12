@@ -3,8 +3,8 @@ import CandidateCard from "../components/CandidateCard";
 import { getVotes, getCurrentUser, castVote } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 
-import LulaImg from "../assets/lula.png";
-import BolsonaroImg from "../assets/bolsonaro.png";
+import Lula from '../assets/lula.jpg';
+import Bolsonaro from '../assets/bolsonaro.jpg';
 
 export default function Home() {
   const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
