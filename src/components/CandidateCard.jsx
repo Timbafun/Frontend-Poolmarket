@@ -8,7 +8,7 @@ const CandidateCard = ({ id, name, photo }) => {
     const fetchVotes = async () => {
       const res = await axios.get(`https://backend-poolmarket.onrender.com/votes/${id}`);
       setVotes(res.data.votes);
-    }
+    };
     fetchVotes();
   }, [id]);
 
@@ -18,7 +18,7 @@ const CandidateCard = ({ id, name, photo }) => {
       <h3>{name}</h3>
       <p className="votes-count">{votes} votos</p>
     </div>
-  )
-}
+  );
+};
 
 export default CandidateCard;
