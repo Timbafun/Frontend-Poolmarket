@@ -1,23 +1,21 @@
 /* ===== Estilo Login ===== */
 .page.auth h2 {
-  text-align: center;      /* Centraliza o título */
-  margin-bottom: 20px;     /* Espaço abaixo do título */
-  margin-top: 20px;        /* Espaço acima do título */
-  font-size: 28px;         /* Ajuste de tamanho do título */
-  color: #007bff;          /* Azul do site */
+  text-align: center;      
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #007bff;          
 }
 
-/* Centraliza o form e campos */
 .page.auth .form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 400px; /* Mantém o tamanho do form */
+  max-width: 400px;
   margin: 0 auto;
 }
 
-/* Estilo dos inputs */
 .page.auth .form input {
   width: 80%;
   max-width: 400px;
@@ -28,9 +26,8 @@
   font-size: 16px;
 }
 
-/* Estilo do botão */
 .page.auth .form .btn {
-  background-color: #007bff; /* Azul do site */
+  background-color: #007bff; 
   color: white;
   border: none;
   padding: 10px 20px;
@@ -43,7 +40,19 @@
 }
 
 .page.auth .form .btn:hover {
-  background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+  background-color: #0056b3;
 }
 
-/* =====*
+/* ===== Responsividade Mobile ===== */
+@media (max-width: 768px) {
+  .page.auth h2 {
+    font-size: 24px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .page.auth .form input,
+  .page.auth .form .btn {
+    width: 90%;
+  }
+}
