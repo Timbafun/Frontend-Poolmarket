@@ -1,0 +1,49 @@
+/* ===== Estilo Login ===== */
+.page.auth h2 {
+  text-align: center;      /* Centraliza o título */
+  margin-bottom: 20px;     /* Espaço abaixo do título */
+  margin-top: 20px;        /* Espaço acima do título */
+  font-size: 28px;         /* Ajuste de tamanho do título */
+  color: #007bff;          /* Azul do site */
+}
+
+/* Centraliza o form e campos */
+.page.auth .form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px; /* Mantém o tamanho do form */
+  margin: 0 auto;
+}
+
+/* Estilo dos inputs */
+.page.auth .form input {
+  width: 80%;
+  max-width: 400px;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+/* Estilo do botão */
+.page.auth .form .btn {
+  background-color: #007bff; /* Azul do site */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 80%;
+  max-width: 400px;
+  transition: background-color 0.3s ease;
+}
+
+.page.auth .form .btn:hover {
+  background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+}
+
+/* =====*
