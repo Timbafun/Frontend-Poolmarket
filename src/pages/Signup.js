@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { registerUser } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Importando o CSS que criamos para estilizar Cadastro
+// ✅ Importando o CSS correto
 import './Cadastro.css';
 
 export default function Cadastro() {

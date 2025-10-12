@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { loginUser } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Importando o CSS que criamos para estilizar Login
+// ✅ Importando o CSS correto
 import './Login.css';
 
 export default function Login() {
