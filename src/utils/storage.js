@@ -3,19 +3,34 @@
 // -------------------------
 // Usuário
 // -------------------------
+
+// Salvar usuário no localStorage
 export const saveUser = (user) => {
   localStorage.setItem('user', JSON.stringify(user));
 };
 
+// Obter usuário
 export const getUser = () => {
   const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 };
 
+// Retorna o usuário atual
 export const getCurrentUser = () => getUser();
 
+// Login simulado: retorna usuário se existir no localStorage
+export const loginUser = (cpf, password) => {
+  const user = getUser();
+  if (user && user.cpf === cpf && user.password === password) {
+    return user;
+  }
+  return null;
+};
+
+// Verifica se usuário está logado
 export const isLoggedIn = () => !!getUser();
 
+// Logout: remove usuário e token
 export const logout = () => {
   localStorage.removeItem('user');
   clearToken();
@@ -24,6 +39,7 @@ export const logout = () => {
 // -------------------------
 // Token (opcional)
 // -------------------------
+
 export const saveToken = (token) => localStorage.setItem('token', token);
 export const getToken = () => localStorage.getItem('token');
 export const clearToken = () => localStorage.removeItem('token');
