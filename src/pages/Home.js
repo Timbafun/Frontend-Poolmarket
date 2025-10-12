@@ -9,30 +9,35 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setVotes(getVotes());
-    // atualiza se houver mudança de login
-    const t = setInterval(() => setUser(getCurrentUser()), 500);
-    return () => clearInterval(t);
+    async function loadVotes() {
+      const v = await getVotes();
+      setVotes(v);
+    }
+    loadVotes();
+
+    // Atualiza se houver mudança de login
+    const interval = setInterval(() => setUser(getCurrentUser()), 500);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleVote = (candidate) => {
+  const handleVote = async (candidate) => {
     const current = getCurrentUser();
     if (!current) {
-      if (!window.confirm("Você precisa estar logado para votar. Ir para Login?")) return;
-      navigate("/login");
+      if (window.confirm("Você precisa estar logado para votar. Ir para Login?")) {
+        navigate("/login");
+      }
       return;
     }
 
-    const res = castVote(candidate, current.cpf);
+    const res = await castVote(candidate, current.cpf);
     if (!res.ok) {
       alert(res.message);
     } else {
-      setVotes(getVotes());
-      alert("Voto contabilizado!");
+      alert("Voto contabilizado com sucesso!");
+      const v = await getVotes();
+      setVotes(v);
     }
   };
-
-  const userCanVote = !user || (user && !user.hasVoted) ? false : true; // we will pass disabled per-card
 
   return (
     <div className="page home">
@@ -40,12 +45,14 @@ export default function Home() {
       <div className="candidates-row">
         <CandidateCard
           name="Lula"
+          imgSrc="/images/lula.jpg"
           votes={votes.lula || 0}
           onVote={() => handleVote("lula")}
           disabled={user && user.hasVoted}
         />
         <CandidateCard
           name="Bolsonaro"
+          imgSrc="/images/bolsonaro.webp"
           votes={votes.bolsonaro || 0}
           onVote={() => handleVote("bolsonaro")}
           disabled={user && user.hasVoted}

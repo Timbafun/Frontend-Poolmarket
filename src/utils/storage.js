@@ -1,116 +1,100 @@
-// key names
-const USERS_KEY = "pm_users";
-const VOTES_KEY = "pm_votes";
-const CURRENT_KEY = "pm_currentUser";
+// src/utils/storage.js
+const API_URL = process.env.REACT_APP_API_URL || "https://backend-poolmarket.onrender.com";
 
-// inicializa storage se necessário
-function ensureInit() {
-  if (!localStorage.getItem(USERS_KEY)) localStorage.setItem(USERS_KEY, JSON.stringify([]));
-  if (!localStorage.getItem(VOTES_KEY)) {
-    // inicializa com os dois candidatos
-    const initial = { lula: 0, bolsonaro: 0 };
-    localStorage.setItem(VOTES_KEY, JSON.stringify(initial));
+// -----------------------------
+// Funções de Cadastro e Login
+// -----------------------------
+
+// Registrar novo usuário
+export async function registerUser(userData) {
+  try {
+    const response = await fetch(`${API_URL}/users/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Erro no cadastro.");
+
+    // Salva o usuário logado localmente
+    localStorage.setItem("currentUser", JSON.stringify(data.user));
+    return { ok: true, user: data.user };
+
+  } catch (error) {
+    return { ok: false, message: error.message };
   }
 }
 
-export function getUsers() {
-  ensureInit();
-  return JSON.parse(localStorage.getItem(USERS_KEY));
-}
+// Fazer login
+export async function loginUser(credentials) {
+  try {
+    const response = await fetch(`${API_URL}/users/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
 
-export function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Erro no login.");
 
-export function getVotes() {
-  ensureInit();
-  return JSON.parse(localStorage.getItem(VOTES_KEY));
-}
+    // Salva o usuário logado localmente
+    localStorage.setItem("currentUser", JSON.stringify(data.user));
+    return { ok: true, user: data.user };
 
-export function saveVotes(votes) {
-  localStorage.setItem(VOTES_KEY, JSON.stringify(votes));
-}
-
-export function registerUser(user) {
-  // user: { nome, email, telefone, cpf, senha }
-  ensureInit();
-  const users = getUsers();
-
-  const cpfClean = cleanCPF(user.cpf);
-  // verifica duplicidade de CPF ou email
-  if (users.some(u => cleanCPF(u.cpf) === cpfClean)) {
-    return { ok: false, message: "CPF já cadastrado." };
+  } catch (error) {
+    return { ok: false, message: error.message };
   }
-  if (users.some(u => u.email === user.email)) {
-    return { ok: false, message: "E-mail já cadastrado." };
-  }
-
-  const newUser = { ...user, cpf: cpfClean, hasVoted: false };
-  users.push(newUser);
-  saveUsers(users);
-  return { ok: true, user: newUser };
 }
 
-export function loginUser(email, senha) {
-  ensureInit();
-  const users = getUsers();
-  const user = users.find(u => u.email === email && u.senha === senha);
-  if (!user) return { ok: false, message: "Credenciais inválidas." };
-  localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
-  return { ok: true, user };
-}
-
-export function logout() {
-  localStorage.removeItem(CURRENT_KEY);
-}
-
+// Obter usuário atual
 export function getCurrentUser() {
-  const s = localStorage.getItem(CURRENT_KEY);
-  return s ? JSON.parse(s) : null;
+  const user = localStorage.getItem("currentUser");
+  return user ? JSON.parse(user) : null;
 }
 
-export function updateCurrentUser(user) {
-  // atualiza usuário no CURRENT_KEY e na lista de users
-  localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
-  const users = getUsers();
-  const idx = users.findIndex(u => cleanCPF(u.cpf) === cleanCPF(user.cpf));
-  if (idx !== -1) {
-    users[idx] = user;
-    saveUsers(users);
+// Fazer logout
+export function logoutUser() {
+  localStorage.removeItem("currentUser");
+}
+
+// -----------------------------
+// Funções de Votação
+// -----------------------------
+
+// Enviar voto para o backend
+export async function castVote(candidate, cpf) {
+  try {
+    const response = await fetch(`${API_URL}/votes/vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ candidate, cpf }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Erro ao votar.");
+
+    // Atualiza usuário localmente com flag de voto
+    const user = getCurrentUser();
+    if (user) {
+      user.hasVoted = true;
+      localStorage.setItem("currentUser", JSON.stringify(user));
+    }
+
+    return { ok: true, message: "Voto computado com sucesso!" };
+
+  } catch (error) {
+    return { ok: false, message: error.message };
   }
 }
 
-export function castVote(candidate, cpf) {
-  // retorna { ok, message }
-  ensureInit();
-  const users = getUsers();
-  const cpfClean = cleanCPF(cpf);
-  const userIdx = users.findIndex(u => cleanCPF(u.cpf) === cpfClean);
-  if (userIdx === -1) return { ok: false, message: "Usuário não encontrado." };
-
-  const user = users[userIdx];
-  if (user.hasVoted) return { ok: false, message: "CPF já votou." };
-
-  // registra voto
-  const votes = getVotes();
-  if (!(candidate in votes)) return { ok: false, message: "Candidato inválido." };
-  votes[candidate] = (votes[candidate] || 0) + 1;
-  saveVotes(votes);
-
-  // marca usuário como votou
-  users[userIdx] = { ...user, hasVoted: true };
-  saveUsers(users);
-
-  // se estiver logado, atualiza CURRENT
-  const current = getCurrentUser();
-  if (current && cleanCPF(current.cpf) === cpfClean) {
-    updateCurrentUser(users[userIdx]);
+// Buscar total de votos
+export async function getVotes() {
+  try {
+    const response = await fetch(`${API_URL}/votes/count`);
+    const data = await response.json();
+    return data.votes || { lula: 0, bolsonaro: 0 };
+  } catch {
+    return { lula: 0, bolsonaro: 0 };
   }
-
-  return { ok: true };
-}
-
-export function cleanCPF(cpf) {
-  if (!cpf) return "";
-  return cpf.replace(/\D/g, "");
 }
