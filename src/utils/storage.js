@@ -1,100 +1,37 @@
-// src/utils/storage.js
-const API_URL = process.env.REACT_APP_API_URL || "https://backend-poolmarket.onrender.com";
+// storage.js - utilitário para gerenciar dados do usuário no localStorage
 
-// -----------------------------
-// Funções de Cadastro e Login
-// -----------------------------
+// Salvar dados do usuário
+export const saveUser = (user) => {
+  localStorage.setItem('user', JSON.stringify(user));
+};
 
-// Registrar novo usuário
-export async function registerUser(userData) {
-  try {
-    const response = await fetch(`${API_URL}/users/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Erro no cadastro.");
-
-    // Salva o usuário logado localmente
-    localStorage.setItem("currentUser", JSON.stringify(data.user));
-    return { ok: true, user: data.user };
-
-  } catch (error) {
-    return { ok: false, message: error.message };
-  }
-}
-
-// Fazer login
-export async function loginUser(credentials) {
-  try {
-    const response = await fetch(`${API_URL}/users/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Erro no login.");
-
-    // Salva o usuário logado localmente
-    localStorage.setItem("currentUser", JSON.stringify(data.user));
-    return { ok: true, user: data.user };
-
-  } catch (error) {
-    return { ok: false, message: error.message };
-  }
-}
-
-// Obter usuário atual
-export function getCurrentUser() {
-  const user = localStorage.getItem("currentUser");
+// Obter dados do usuário
+export const getUser = () => {
+  const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
-}
+};
 
-// Fazer logout
-export function logoutUser() {
-  localStorage.removeItem("currentUser");
-}
+// Limpar dados do usuário (logout)
+export const logout = () => {
+  localStorage.removeItem('user');
+};
 
-// -----------------------------
-// Funções de Votação
-// -----------------------------
+// Verificar se usuário está logado
+export const isLoggedIn = () => {
+  return !!getUser();
+};
 
-// Enviar voto para o backend
-export async function castVote(candidate, cpf) {
-  try {
-    const response = await fetch(`${API_URL}/votes/vote`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ candidate, cpf }),
-    });
+// Salvar token de autenticação (opcional, se você usar token)
+export const saveToken = (token) => {
+  localStorage.setItem('token', token);
+};
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Erro ao votar.");
+// Obter token de autenticação
+export const getToken = () => {
+  return localStorage.getItem('token');
+};
 
-    // Atualiza usuário localmente com flag de voto
-    const user = getCurrentUser();
-    if (user) {
-      user.hasVoted = true;
-      localStorage.setItem("currentUser", JSON.stringify(user));
-    }
-
-    return { ok: true, message: "Voto computado com sucesso!" };
-
-  } catch (error) {
-    return { ok: false, message: error.message };
-  }
-}
-
-// Buscar total de votos
-export async function getVotes() {
-  try {
-    const response = await fetch(`${API_URL}/votes/count`);
-    const data = await response.json();
-    return data.votes || { lula: 0, bolsonaro: 0 };
-  } catch {
-    return { lula: 0, bolsonaro: 0 };
-  }
-}
+// Limpar token junto com logout
+export const clearToken = () => {
+  localStorage.removeItem('token');
+};
