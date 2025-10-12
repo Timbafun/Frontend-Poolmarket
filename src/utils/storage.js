@@ -1,4 +1,8 @@
-// storage.js - utilitário para gerenciar dados do usuário no localStorage
+// storage.js - gerencia dados do usuário e token no localStorage
+
+// -------------------------
+// Usuário
+// -------------------------
 
 // Salvar dados do usuário
 export const saveUser = (user) => {
@@ -11,27 +15,29 @@ export const getUser = () => {
   return user ? JSON.parse(user) : null;
 };
 
+// Função alternativa para front-end (getCurrentUser)
+export const getCurrentUser = () => getUser();
+
+// Verificar se usuário está logado
+export const isLoggedIn = () => !!getUser();
+
 // Limpar dados do usuário (logout)
 export const logout = () => {
   localStorage.removeItem('user');
+  clearToken(); // Limpa token junto com logout
 };
 
-// Verificar se usuário está logado
-export const isLoggedIn = () => {
-  return !!getUser();
-};
+// -------------------------
+// Token (opcional)
+// -------------------------
 
-// Salvar token de autenticação (opcional, se você usar token)
+// Salvar token de autenticação
 export const saveToken = (token) => {
   localStorage.setItem('token', token);
 };
 
 // Obter token de autenticação
-export const getToken = () => {
-  return localStorage.getItem('token');
-};
+export const getToken = () => localStorage.getItem('token');
 
-// Limpar token junto com logout
-export const clearToken = () => {
-  localStorage.removeItem('token');
-};
+// Limpar token
+export const clearToken = () => localStorage.removeItem('token');
