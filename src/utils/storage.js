@@ -1,4 +1,4 @@
-// storage.js - gerencia dados do usuário, votos e token no localStorage
+// storage.js - gerencia usuário, votos e token no localStorage
 
 // -------------------------
 // Usuário
@@ -15,10 +15,20 @@ export const getUser = () => {
   return user ? JSON.parse(user) : null;
 };
 
-// Retorna o usuário atual
+// Retorna usuário atual
 export const getCurrentUser = () => getUser();
 
-// Login simulado: retorna usuário se existir no localStorage
+// Registro de usuário: impede CPF duplicado
+export const registerUser = (user) => {
+  const existingUser = getUser();
+  if (existingUser && existingUser.cpf === user.cpf) {
+    throw new Error('CPF já cadastrado');
+  }
+  saveUser(user);
+  return user;
+};
+
+// Login simulado
 export const loginUser = (cpf, password) => {
   const user = getUser();
   if (user && user.cpf === cpf && user.password === password) {
@@ -27,14 +37,14 @@ export const loginUser = (cpf, password) => {
   return null;
 };
 
-// Verifica se usuário está logado
-export const isLoggedIn = () => !!getUser();
-
 // Logout: remove usuário e token
 export const logout = () => {
   localStorage.removeItem('user');
   clearToken();
 };
+
+// Verifica se usuário está logado
+export const isLoggedIn = () => !!getUser();
 
 // -------------------------
 // Token (opcional)
