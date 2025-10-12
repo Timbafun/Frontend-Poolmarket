@@ -3,6 +3,9 @@ import CandidateCard from "../components/CandidateCard";
 import { getVotes, getCurrentUser, castVote } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 
+import LulaImg from "../assets/lula.png";
+import BolsonaroImg from "../assets/bolsonaro.png";
+
 export default function Home() {
   const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
   const [user, setUser] = useState(getCurrentUser());
@@ -10,7 +13,6 @@ export default function Home() {
 
   useEffect(() => {
     setVotes(getVotes());
-    // atualiza se houver mudança de login
     const t = setInterval(() => setUser(getCurrentUser()), 500);
     return () => clearInterval(t);
   }, []);
@@ -32,20 +34,20 @@ export default function Home() {
     }
   };
 
-  const userCanVote = !user || (user && !user.hasVoted) ? false : true; // we will pass disabled per-card
-
   return (
     <div className="page home">
       <h2 className="page-title">Candidatos</h2>
       <div className="candidates-row">
         <CandidateCard
           name="Lula"
+          imgSrc={LulaImg}
           votes={votes.lula || 0}
           onVote={() => handleVote("lula")}
           disabled={user && user.hasVoted}
         />
         <CandidateCard
           name="Bolsonaro"
+          imgSrc={BolsonaroImg}
           votes={votes.bolsonaro || 0}
           onVote={() => handleVote("bolsonaro")}
           disabled={user && user.hasVoted}
