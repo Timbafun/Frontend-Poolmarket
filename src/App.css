@@ -1,109 +1,88 @@
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #f8f9fa;
-  margin: 0;
-  padding: 0;
+:root{
+  --turquoise: #00c3ff;
+  --turquoise-dark: #00a8d6;
+  --white: #ffffff;
+  --muted: #666;
 }
+
+* { box-sizing: border-box; }
+body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-serif; background: var(--white); color: #222; }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
-  background-color: #004aad;
-  color: white;
+  padding: 18px 28px;
+  background: linear-gradient(90deg, var(--turquoise) 0%, var(--turquoise-dark) 100%);
+  color: var(--white);
 }
 
-.header .logo {
-  font-size: 2rem;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-.header .nav-links a {
-  margin-left: 20px;
-  color: white;
+.logo {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
   text-decoration: none;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 10px;
 }
 
-.header .nav-links a:hover {
-  text-decoration: underline;
+.header-right { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--white);
+  color: var(--turquoise);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
 }
+.btn.outline { background: transparent; border: 1px solid var(--white); color: var(--white); }
+.btn.secondary { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.25); }
 
-.home-container {
+main { padding: 28px; min-height: calc(100vh - 80px); }
+
+/* Home */
+.page-title { margin-top: 6px; color: #333; text-align: center; }
+.candidates-row {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  gap: 48px;
+  margin-top: 28px;
+  flex-wrap: wrap;
 }
 
-.candidates-grid {
-  display: flex;
-  gap: 40px;
-}
-
-.candidate-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+/* Candidate card */
+.card {
   width: 220px;
-  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 18px;
   text-align: center;
 }
-
-.candidate-card img {
-  width: 100%;
-  border-radius: 12px;
-  object-fit: cover;
-  height: 200px;
-}
-
-.candidate-card h3 {
-  margin: 10px 0 5px;
-  color: #222;
-}
-
-.votes-count {
-  font-weight: 600;
-  color: #004aad;
-}
-
-.form-container {
-  width: 90%;
-  max-width: 400px;
-  margin: 40px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.form-container input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
+.placeholder-image {
+  width: 160px;
+  height: 120px;
+  margin: 0 auto 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  background: linear-gradient(180deg, #e6f9ff, #dff6fb);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color: #007991;
 }
 
-.form-container button {
-  width: 100%;
-  padding: 12px;
-  background-color: #004aad;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
+/* Auth pages (login/signup) */
+.page.auth { display:flex; justify-content:center; align-items:flex-start; padding-top: 30px; }
+.form { width: 320px; display:flex; flex-direction:column; gap: 10px; }
+.form input { padding: 10px; border-radius:8px; border:1px solid #ddd; }
+.form button { margin-top:6px; }
 
-.form-container button:hover {
-  background-color: #003480;
-}
-
-.form-message {
-  margin-top: 10px;
-  font-weight: 600;
-  color: green;
-  text-align: center;
+/* small screens */
+@media (max-width: 720px) {
+  .header { padding: 14px; }
+  .candidates-row { gap: 18px; }
+  .card { width: 46%; }
+  .form { width: 100%; padding: 0 16px; }
 }
