@@ -1,30 +1,40 @@
 import React, { useState } from "react";
-import { loginUser } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../utils/storage";
+import "./Auth.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [form, setForm] = useState({ cpf: "", senha: "" });
   const navigate = useNavigate();
 
-  const submit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const res = loginUser(email.trim(), senha);
-    if (!res.ok) {
-      alert(res.message);
-      return;
+    const success = loginUser(form.cpf, form.senha);
+    if (success) {
+      alert("Login realizado com sucesso!");
+      navigate("/"); // redireciona logado
+    } else {
+      alert("CPF ou senha inválidos.");
     }
-    alert("Login realizado!");
-    navigate("/");
   };
 
   return (
-    <div className="page auth">
+    <div className="auth-container">
       <h2>Login</h2>
-      <form className="form" onSubmit={submit}>
-        <input placeholder="E-mail" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input placeholder="Senha" type="password" value={senha} onChange={e => setSenha(e.target.value)} required />
-        <button className="btn" type="submit">Entrar</button>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="CPF"
+          value={form.cpf}
+          onChange={(e) => setForm({ ...form, cpf: e.target.value })}
+        />
+        <input
+          type="password"
+          placeholder="Senha"
+          value={form.senha}
+          onChange={(e) => setForm({ ...form, senha: e.target.value })}
+        />
+        <button type="submit" className="auth-button">Entrar</button>
       </form>
     </div>
   );

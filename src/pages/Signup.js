@@ -1,54 +1,34 @@
 import React, { useState } from "react";
-import { registerUser, cleanCPF } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../utils/storage";
+import "./Auth.css";
 
 export default function Signup() {
-  const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    cpf: "",
-    senha: "",
-    confirmaSenha: ""
-  });
+  const [form, setForm] = useState({ nome: "", email: "", telefone: "", cpf: "", senha: "", confirmar: "" });
   const navigate = useNavigate();
 
-  const handle = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const submit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (form.senha !== form.confirmaSenha) {
-      alert("As senhas não coincidem.");
-      return;
-    }
-    const res = registerUser({
-      nome: form.nome.trim(),
-      email: form.email.trim(),
-      telefone: form.telefone.trim(),
-      cpf: cleanCPF(form.cpf),
-      senha: form.senha
-    });
-    if (!res.ok) {
+    const res = registerUser(form);
+    if (res.ok) {
+      alert("Cadastro efetuado com sucesso!");
+      navigate("/"); // redireciona logado
+    } else {
       alert(res.message);
-      return;
     }
-    alert("Cadastro realizado com sucesso!");
-    navigate("/login");
   };
 
   return (
-    <div className="page auth">
+    <div className="auth-container">
       <h2>Cadastro</h2>
-      <form className="form" onSubmit={submit}>
-        <input name="nome" placeholder="Nome completo" value={form.nome} onChange={handle} required />
-        <input name="email" type="email" placeholder="E-mail" value={form.email} onChange={handle} required />
-        <input name="telefone" placeholder="Telefone" value={form.telefone} onChange={handle} />
-        <input name="cpf" placeholder="CPF (somente números)" value={form.cpf} onChange={handle} required />
-        <input name="senha" type="password" placeholder="Senha" value={form.senha} onChange={handle} required />
-        <input name="confirmaSenha" type="password" placeholder="Confirmar senha" value={form.confirmaSenha} onChange={handle} required />
-        <button className="btn" type="submit">Cadastrar</button>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Nome completo" onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+        <input type="email" placeholder="E-mail" onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        <input type="text" placeholder="Telefone" onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+        <input type="text" placeholder="CPF" onChange={(e) => setForm({ ...form, cpf: e.target.value })} />
+        <input type="password" placeholder="Senha" onChange={(e) => setForm({ ...form, senha: e.target.value })} />
+        <input type="password" placeholder="Confirmar senha" onChange={(e) => setForm({ ...form, confirmar: e.target.value })} />
+        <button type="submit" className="auth-button">Cadastrar</button>
       </form>
     </div>
   );
