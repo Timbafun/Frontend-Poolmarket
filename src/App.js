@@ -1,10 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// ✅ Importando os componentes com os nomes corretos
-import Home from './pages/home';
-import Cadastro from './pages/cadastro';
-import Login from './pages/login';
+// ✅ Imports ajustados com maiúsculas/minúsculas corretas
+import Home from './pages/Home';
+import Cadastro from './pages/Cadastro';
+import Login from './pages/Login';
+
+// ✅ Import do CSS global (se necessário)
+import './App.css';
 
 function App() {
   return (
