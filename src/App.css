@@ -6,8 +6,15 @@
 }
 
 * { box-sizing: border-box; }
-body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-serif; background: var(--white); color: #222; }
+body, html, #root { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Inter, Arial, sans-serif; 
+  background: var(--white); 
+  color: #222; 
+}
 
+/* ===== Header ===== */
 .header {
   display: flex;
   justify-content: space-between;
@@ -26,7 +33,12 @@ body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-ser
   padding: 6px 10px;
 }
 
-.header-right { display: flex; gap: 10px; align-items: center; }
+.header-right { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; 
+}
+
 .btn {
   background: var(--white);
   color: var(--turquoise);
@@ -36,13 +48,30 @@ body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-ser
   cursor: pointer;
   text-decoration: none;
 }
-.btn.outline { background: transparent; border: 1px solid var(--white); color: var(--white); }
-.btn.secondary { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.25); }
+.btn.outline { 
+  background: transparent; 
+  border: 1px solid var(--white); 
+  color: var(--white); 
+}
+.btn.secondary { 
+  background: transparent; 
+  color: var(--white); 
+  border: 1px solid rgba(255,255,255,0.25); 
+}
 
-main { padding: 28px; min-height: calc(100vh - 80px); }
+/* ===== Main ===== */
+main { 
+  padding: 28px; 
+  min-height: calc(100vh - 80px); 
+}
 
-/* Home */
-.page-title { margin-top: 6px; color: #333; text-align: center; }
+/* ===== Home ===== */
+.page-title { 
+  margin-top: 6px; 
+  color: #333; 
+  text-align: center; 
+}
+
 .candidates-row {
   display: flex;
   justify-content: center;
@@ -51,7 +80,7 @@ main { padding: 28px; min-height: calc(100vh - 80px); }
   flex-wrap: wrap;
 }
 
-/* Candidate card */
+/* ===== Candidate card ===== */
 .card {
   width: 220px;
   background: #fff;
@@ -60,6 +89,13 @@ main { padding: 28px; min-height: calc(100vh - 80px); }
   padding: 18px;
   text-align: center;
 }
+
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
 .placeholder-image {
   width: 160px;
   height: 120px;
@@ -73,13 +109,32 @@ main { padding: 28px; min-height: calc(100vh - 80px); }
   color: #007991;
 }
 
-/* Auth pages (login/signup) */
-.page.auth { display:flex; justify-content:center; align-items:flex-start; padding-top: 30px; }
-.form { width: 320px; display:flex; flex-direction:column; gap: 10px; }
-.form input { padding: 10px; border-radius:8px; border:1px solid #ddd; }
-.form button { margin-top:6px; }
+/* ===== Auth pages (login/signup) ===== */
+.page.auth { 
+  display:flex; 
+  justify-content:center; 
+  align-items:flex-start; 
+  padding-top: 30px; 
+}
 
-/* small screens */
+.form { 
+  width: 320px; 
+  display:flex; 
+  flex-direction:column; 
+  gap: 10px; 
+}
+
+.form input { 
+  padding: 10px; 
+  border-radius:8px; 
+  border:1px solid #ddd; 
+}
+
+.form button { 
+  margin-top:6px; 
+}
+
+/* ===== Small screens ===== */
 @media (max-width: 720px) {
   .header { padding: 14px; }
   .candidates-row { gap: 18px; }
@@ -87,42 +142,43 @@ main { padding: 28px; min-height: calc(100vh - 80px); }
   .form { width: 100%; padding: 0 16px; }
 }
 
-/* ===== Ajustes específicos para telas menores (mobile) ===== */
+/* ===== Ajustes específicos para mobile ===== */
 @media (max-width: 768px) {
   /* Cabeçalho */
-  header {
+  .header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
   }
 
-  header h1 {
+  .logo {
     font-size: 1.2rem; /* diminui o PoolMarket */
   }
 
-  header button {
-    font-size: 0.85rem; /* diminui o Login e Cadastro */
+  .header-right .btn {
+    font-size: 0.85rem; /* diminui Login/Cadastro */
     padding: 6px 10px;
   }
 
   /* Título principal (Candidatos) */
-  h2 {
+  .page-title {
     font-size: 1.3rem;
   }
 
-  /* Cards dos candidatos */
-  .cards-container {
-    display: flex;
-    flex-direction: row; /* deixa lado a lado */
+  /* Cards dos candidatos lado a lado */
+  .candidates-row {
+    gap: 12px;
     justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
   }
 
   .card {
-    width: 45%; /* ocupa quase metade da tela */
-    margin-bottom: 10px;
+    width: 45%; /* ocupa metade da tela */
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    font-size: 1rem;
   }
 
   .card img {
@@ -130,8 +186,19 @@ main { padding: 28px; min-height: calc(100vh - 80px); }
     height: auto;
   }
 
-  .card h3 {
-    font-size: 1rem;
+  /* Formulários auth */
+  .form {
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  .form input {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .form button {
+    font-size: 0.9rem;
+    padding: 8px;
   }
 }
-
