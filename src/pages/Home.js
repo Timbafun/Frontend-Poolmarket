@@ -1,73 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { getVotes, getCurrentUser, castVote } from "../utils/storage";
-import { useNavigate } from "react-router-dom";
-import "./Home.css";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
-  const [user, setUser] = useState(getCurrentUser());
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    setVotes(getVotes());
-    const t = setInterval(() => setUser(getCurrentUser()), 500);
-    return () => clearInterval(t);
+    // Checa se o usuário está logado no localStorage
+    const loggedUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedUser) {
+      setUser(loggedUser);
+    }
   }, []);
 
-  const handleVote = (candidate) => {
-    const current = getCurrentUser();
-    if (!current) {
-      if (!window.confirm("Você precisa estar logado para votar. Ir para Login?")) return;
-      navigate("/login");
+  const handleVote = (candidato) => {
+    if (!user) {
+      alert("Você precisa estar logado para votar!");
       return;
     }
 
-    const res = castVote(candidate, current.cpf);
-    if (!res.ok) {
-      alert(res.message);
-    } else {
-      setVotes(getVotes());
-      alert("Voto contabilizado!");
-    }
+    // Aqui você envia o voto para o backend
+    alert(`Voto registrado para ${candidato}`);
   };
 
   return (
-    <div className="page home">
+    <div>
       <h2 className="page-title">Candidatos</h2>
       <div className="candidates-row">
-        <div className="candidate">
-          <img
-            src="/images/lula.jpg"
-            alt="Lula"
-            className="candidate-photo"
-          />
+        <div className="card" onClick={() => handleVote("Lula")}>
+          <img src="/lula.jpg" alt="Lula" />
           <h3>Lula</h3>
-          <p>{votes.lula || 0} votos</p>
-          <button
-            className="vote-button"
-            onClick={() => handleVote("lula")}
-            disabled={user && user.hasVoted}
-          >
-            Votar
-          </button>
         </div>
-
-        <div className="candidate">
-          <img
-            src="/images/bolsonaro.webp"
-            alt="Bolsonaro"
-            className="candidate-photo"
-            onError={(e) => (e.target.src = "/images/bolsonaro_fallback.jpg")}
-          />
+        <div className="card" onClick={() => handleVote("Bolsonaro")}>
+          <img src="/bolsonaro.jpg" alt="Bolsonaro" />
           <h3>Bolsonaro</h3>
-          <p>{votes.bolsonaro || 0} votos</p>
-          <button
-            className="vote-button"
-            onClick={() => handleVote("bolsonaro")}
-            disabled={user && user.hasVoted}
-          >
-            Votar
-          </button>
         </div>
       </div>
     </div>
