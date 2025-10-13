@@ -4,17 +4,18 @@ import { loginUser } from "../utils/storage";
 import "./Auth.css";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", senha: "" }); // mudou cpf → email
+  const [form, setForm] = useState({ email: "", senha: "" });
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const success = loginUser(form.email, form.senha); // envia email em vez de cpf
-    if (success) {
+    const res = loginUser(form.email, form.senha);
+    if (res.ok) {
       alert("Login realizado com sucesso!");
-      navigate("/"); // redireciona logado
+      window.dispatchEvent(new Event("storage")); // força atualização do Header
+      navigate("/user-area"); // redireciona para área do usuário
     } else {
-      alert("E-mail ou senha inválidos."); // alterei a mensagem
+      alert(res.message);
     }
   };
 
@@ -23,18 +24,16 @@ export default function Login() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="E-mail" // trocado de CPF para E-mail
+          type="text"
+          placeholder="E-mail"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
         />
         <input
           type="password"
           placeholder="Senha"
           value={form.senha}
           onChange={(e) => setForm({ ...form, senha: e.target.value })}
-          required
         />
         <button type="submit" className="auth-button">Entrar</button>
       </form>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getCurrentUser } from "../utils/storage"; // usa storage
 import "./Header.css";
 
 export default function Header() {
@@ -7,17 +8,13 @@ export default function Header() {
 
   useEffect(() => {
     const checkLogin = () => {
-      const user = localStorage.getItem("user");
+      const user = getCurrentUser();
       setIsLogged(!!user);
     };
 
-    // Verifica ao carregar
     checkLogin();
-
-    // Atualiza sempre que o localStorage mudar
     window.addEventListener("storage", checkLogin);
 
-    // Limpeza do event listener
     return () => window.removeEventListener("storage", checkLogin);
   }, []);
 

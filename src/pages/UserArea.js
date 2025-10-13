@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, logout } from "../utils/storage";
+import { getCurrentUser, logout, getVotes } from "../utils/storage";
 import "./Auth.css";
 
 export default function UserArea() {
@@ -11,29 +11,26 @@ export default function UserArea() {
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      navigate("/login"); // se não estiver logado, redireciona para login
+      navigate("/login");
       return;
     }
     setUser(currentUser);
 
-    // Exemplo de histórico de votação (pode ser puxado do storage real)
-    const votos = JSON.parse(localStorage.getItem("pm_votes")) || {};
+    // Histórico de votos
+    const votes = getVotes();
     const userVotes = [];
-
     if (currentUser.hasVoted) {
-      // apenas exemplo simples, você pode expandir para registrar horário real
-      if (votos.lula > 0) userVotes.push({ acao: "Votou em Lula", horario: new Date().toLocaleString() });
-      if (votos.bolsonaro > 0) userVotes.push({ acao: "Votou em Bolsonaro", horario: new Date().toLocaleString() });
+      if (votes.lula > 0) userVotes.push({ acao: "Votou em Lula", horario: new Date().toLocaleString() });
+      if (votes.bolsonaro > 0) userVotes.push({ acao: "Votou em Bolsonaro", horario: new Date().toLocaleString() });
     }
-
     setHistorico(userVotes);
   }, [navigate]);
 
   const handleLogout = () => {
     logout();
     alert("Você saiu da sua conta.");
-    navigate("/");
     window.dispatchEvent(new Event("storage")); // atualiza o Header
+    navigate("/");
   };
 
   return (
@@ -47,17 +44,15 @@ export default function UserArea() {
             <p>Nenhuma atividade registrada.</p>
           ) : (
             <ul style={{ listStyle: "none", padding: 0 }}>
-              {historico.map((item, index) => (
-                <li key={index}>
+              {historico.map((item, idx) => (
+                <li key={idx}>
                   <p>{item.acao}</p>
                   <small>{item.horario}</small>
                 </li>
               ))}
             </ul>
           )}
-          <button className="auth-button" onClick={handleLogout}>
-            Sair
-          </button>
+          <button className="auth-button" onClick={handleLogout}>Sair</button>
         </>
       )}
     </div>
