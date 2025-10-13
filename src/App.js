@@ -1,12 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// ✅ Imports ajustados com maiúsculas/minúsculas corretas
+// ✅ Imports ajustados com os nomes reais
 import Home from './pages/Home';
-import Cadastro from './pages/Cadastro';
+import Signup from './pages/Signup';
 import Login from './pages/Login';
 
-// ✅ Import do CSS global (se necessário)
 import './App.css';
 
 function App() {
@@ -14,7 +13,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/cadastro" element={<Signup />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
