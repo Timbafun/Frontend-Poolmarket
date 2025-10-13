@@ -1,55 +1,40 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../utils/storage";
+import "./Auth.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [form, setForm] = useState({ cpf: "", senha: "" });
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    try {
-      const res = await fetch("URL_DO_BACKEND/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, senha }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        // salva usuário no localStorage para manter logado
-        localStorage.setItem("user", JSON.stringify(data.user));
-        alert("Logado com sucesso!");
-        navigate("/"); // redireciona para home
-      } else {
-        alert("E-mail ou senha inválidos");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao fazer login");
+    const success = loginUser(form.cpf, form.senha);
+    if (success) {
+      alert("Login realizado com sucesso!");
+      navigate("/"); // redireciona logado
+    } else {
+      alert("CPF ou senha inválidos.");
     }
   };
 
   return (
-    <div className="page auth">
-      <form className="form" onSubmit={handleLogin}>
+    <div className="auth-container">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          type="text"
+          placeholder="CPF"
+          value={form.cpf}
+          onChange={(e) => setForm({ ...form, cpf: e.target.value })}
         />
         <input
           type="password"
           placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
+          value={form.senha}
+          onChange={(e) => setForm({ ...form, senha: e.target.value })}
         />
-        <button type="submit" className="btn">Login</button>
+        <button type="submit" className="auth-button">Entrar</button>
       </form>
     </div>
   );
