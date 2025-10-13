@@ -9,14 +9,14 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validação de senha
     if (form.senha !== form.confirmar) {
       alert("As senhas não coincidem!");
       return;
     }
 
     try {
-      // Substitua essa URL pelo endereço do seu backend no Render
-      const BACKEND_URL = "https://SEU_BACKEND_RENDER_URL"; 
+      const BACKEND_URL = "https://backend-poolmarket.onrender.com";
 
       const response = await fetch(`${BACKEND_URL}/api/register`, {
         method: "POST",
@@ -34,7 +34,7 @@ export default function Signup() {
 
       if (data.ok) {
         alert("Cadastro efetuado com sucesso!");
-        navigate("/"); // mantém o redirecionamento
+        navigate("/"); // redireciona logado mantendo layout
       } else {
         alert(data.message);
       }
