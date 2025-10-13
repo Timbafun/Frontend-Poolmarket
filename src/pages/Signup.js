@@ -1,20 +1,44 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../utils/storage";
 import "./Auth.css";
 
 export default function Signup() {
   const [form, setForm] = useState({ nome: "", email: "", telefone: "", cpf: "", senha: "", confirmar: "" });
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = registerUser(form);
-    if (res.ok) {
-      alert("Cadastro efetuado com sucesso!");
-      navigate("/"); // redireciona logado
-    } else {
-      alert(res.message);
+
+    // opcional: validação de senha
+    if (form.senha !== form.confirmar) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://SEU_BACKEND_URL/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: form.nome,
+          email: form.email,
+          telefone: form.telefone,
+          cpf: form.cpf,
+          senha: form.senha
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.ok) {
+        alert("Cadastro efetuado com sucesso!");
+        navigate("/"); // mantém o redirecionamento
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao cadastrar usuário.");
     }
   };
 
