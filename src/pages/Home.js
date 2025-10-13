@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import CandidateCard from "../components/CandidateCard";
 import { getVotes, getCurrentUser, castVote } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -55,9 +54,10 @@ export default function Home() {
 
         <div className="candidate">
           <img
-            src="/images/bolsonaro.jpg"
+            src="/images/bolsonaro.webp"
             alt="Bolsonaro"
             className="candidate-photo"
+            onError={(e) => (e.target.src = "/images/bolsonaro_fallback.jpg")}
           />
           <h3>Bolsonaro</h3>
           <p>{votes.bolsonaro || 0} votos</p>

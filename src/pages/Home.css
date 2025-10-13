@@ -12,7 +12,7 @@
 .candidates-row {
   display: flex;
   justify-content: center;
-  gap: 80px;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
@@ -55,4 +55,31 @@
 .vote-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* 🔹 Ajustes para telas pequenas (mobile) */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.6rem;
+  }
+
+  .candidates-row {
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .candidate {
+    width: 160px;
+    padding: 10px;
+  }
+
+  .candidate-photo {
+    height: 180px;
+  }
+
+  .vote-button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
 }
