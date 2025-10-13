@@ -6,9 +6,19 @@ export default function Header() {
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    // Verifica se existe usuário logado no localStorage
-    const user = localStorage.getItem("user");
-    setIsLogged(!!user);
+    const checkLogin = () => {
+      const user = localStorage.getItem("user");
+      setIsLogged(!!user);
+    };
+
+    // Verifica ao carregar
+    checkLogin();
+
+    // Atualiza sempre que o localStorage mudar
+    window.addEventListener("storage", checkLogin);
+
+    // Limpeza do event listener
+    return () => window.removeEventListener("storage", checkLogin);
   }, []);
 
   return (
