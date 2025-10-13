@@ -9,14 +9,16 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // opcional: validação de senha
     if (form.senha !== form.confirmar) {
       alert("As senhas não coincidem!");
       return;
     }
 
     try {
-      const response = await fetch("https://SEU_BACKEND_URL/api/register", {
+      // Substitua essa URL pelo endereço do seu backend no Render
+      const BACKEND_URL = "https://SEU_BACKEND_RENDER_URL"; 
+
+      const response = await fetch(`${BACKEND_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
