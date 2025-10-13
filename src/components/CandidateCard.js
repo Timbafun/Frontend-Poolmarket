@@ -1,16 +1,18 @@
 import React from "react";
+import "./CandidateCard.css";
 
-export default function CandidateCard({ name, imgSrc, votes, onVote, disabled }) {
+export default function CandidateCard({ name, votes, onVote, disabled, image }) {
   return (
-    <div className="card">
-      <div className="candidate-image">
-        {/* substitua por <img src={imgSrc} /> se tiver imagem real */}
-        <div className="placeholder-image">{name}</div>
-      </div>
-      <h3>{name}</h3>
-      <p className="votes">Votos: <strong>{votes}</strong></p>
-      <button className="btn" onClick={onVote} disabled={disabled}>
-        {disabled ? "Já votou" : "Votar"}
+    <div className="candidate-card">
+      <img src={image} alt={name} className="candidate-photo" />
+      <h3 className="candidate-name">{name}</h3>
+      <p className="candidate-votes">{votes} votos</p>
+      <button
+        className="vote-button"
+        onClick={onVote}
+        disabled={disabled}
+      >
+        Votar
       </button>
     </div>
   );

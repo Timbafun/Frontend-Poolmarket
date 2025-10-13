@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CandidateCard from "../components/CandidateCard";
 import { getVotes, getCurrentUser, castVote } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
 export default function Home() {
   const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
@@ -10,7 +11,6 @@ export default function Home() {
 
   useEffect(() => {
     setVotes(getVotes());
-    // atualiza se houver mudança de login
     const t = setInterval(() => setUser(getCurrentUser()), 500);
     return () => clearInterval(t);
   }, []);
@@ -32,24 +32,43 @@ export default function Home() {
     }
   };
 
-  const userCanVote = !user || (user && !user.hasVoted) ? false : true; // we will pass disabled per-card
-
   return (
     <div className="page home">
       <h2 className="page-title">Candidatos</h2>
       <div className="candidates-row">
-        <CandidateCard
-          name="Lula"
-          votes={votes.lula || 0}
-          onVote={() => handleVote("lula")}
-          disabled={user && user.hasVoted}
-        />
-        <CandidateCard
-          name="Bolsonaro"
-          votes={votes.bolsonaro || 0}
-          onVote={() => handleVote("bolsonaro")}
-          disabled={user && user.hasVoted}
-        />
+        <div className="candidate">
+          <img
+            src="/images/lula.jpg"
+            alt="Lula"
+            className="candidate-photo"
+          />
+          <h3>Lula</h3>
+          <p>{votes.lula || 0} votos</p>
+          <button
+            className="vote-button"
+            onClick={() => handleVote("lula")}
+            disabled={user && user.hasVoted}
+          >
+            Votar
+          </button>
+        </div>
+
+        <div className="candidate">
+          <img
+            src="/images/bolsonaro.jpg"
+            alt="Bolsonaro"
+            className="candidate-photo"
+          />
+          <h3>Bolsonaro</h3>
+          <p>{votes.bolsonaro || 0} votos</p>
+          <button
+            className="vote-button"
+            onClick={() => handleVote("bolsonaro")}
+            disabled={user && user.hasVoted}
+          >
+            Votar
+          </button>
+        </div>
       </div>
     </div>
   );
