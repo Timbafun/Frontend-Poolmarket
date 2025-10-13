@@ -86,3 +86,50 @@ main { padding: 28px; min-height: calc(100vh - 80px); }
   .card { width: 46%; }
   .form { width: 100%; padding: 0 16px; }
 }
+
+/* ===== Ajustes específicos para telas menores (mobile) ===== */
+@media (max-width: 768px) {
+  /* Cabeçalho */
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+  }
+
+  header h1 {
+    font-size: 1.2rem; /* diminui o PoolMarket */
+  }
+
+  header button {
+    font-size: 0.85rem; /* diminui o Login e Cadastro */
+    padding: 6px 10px;
+  }
+
+  /* Título principal (Candidatos) */
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Cards dos candidatos */
+  .cards-container {
+    display: flex;
+    flex-direction: row; /* deixa lado a lado */
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    width: 45%; /* ocupa quase metade da tela */
+    margin-bottom: 10px;
+  }
+
+  .card img {
+    width: 100%;
+    height: auto;
+  }
+
+  .card h3 {
+    font-size: 1rem;
+  }
