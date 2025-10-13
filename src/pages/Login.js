@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { loginUser } from "../utils/storage";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [form, setForm] = useState({ email:'', cpf:'' });
-  const [message, setMessage] = useState('');
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = e => setForm({...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = async e => {
+  const submit = (e) => {
     e.preventDefault();
-    try {
-      // aqui você pode adicionar autenticação real
-      setMessage('Login realizado com sucesso!');
-    } catch(err) {
-      setMessage('Erro no login');
+    const res = loginUser(email.trim(), senha);
+    if (!res.ok) {
+      alert(res.message);
+      return;
     }
-  }
+    alert("Login realizado!");
+    navigate("/");
+  };
 
   return (
-    <div className="form-container">
+    <div className="page auth">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="email" value={form.email} onChange={handleChange} placeholder="Email" required />
-        <input name="cpf" value={form.cpf} onChange={handleChange} placeholder="CPF" required />
-        <button type="submit">Entrar</button>
+      <form className="form" onSubmit={submit}>
+        <input placeholder="E-mail" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <input placeholder="Senha" type="password" value={senha} onChange={e => setSenha(e.target.value)} required />
+        <button className="btn" type="submit">Entrar</button>
       </form>
-      <p className="form-message">{message}</p>
     </div>
   );
-};
-
-export default Login;
+}
