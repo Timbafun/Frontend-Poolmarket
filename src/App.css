@@ -1,108 +1,88 @@
-/* ===========================
-   Estilos gerais (mantidos)
-   =========================== */
+:root{
+  --turquoise: #00c3ff;
+  --turquoise-dark: #00a8d6;
+  --white: #ffffff;
+  --muted: #666;
+}
 
-/* Cabeçalho */
-header {
+* { box-sizing: border-box; }
+body, html, #root { height: 100%; margin: 0; font-family: Inter, Arial, sans-serif; background: var(--white); color: #222; }
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  font-size: 18px; /* tamanho normal desktop */
+  padding: 18px 28px;
+  background: linear-gradient(90deg, var(--turquoise) 0%, var(--turquoise-dark) 100%);
+  color: var(--white);
 }
 
-header .logo {
-  font-size: 22px; /* logo desktop */
+.logo {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 6px 10px;
 }
 
-header .login-cadastro {
-  font-size: 16px; /* login/cadastro desktop */
+.header-right { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--white);
+  color: var(--turquoise);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
 }
+.btn.outline { background: transparent; border: 1px solid var(--white); color: var(--white); }
+.btn.secondary { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.25); }
 
-/* Container de candidatos */
-.candidatos-container {
+main { padding: 28px; min-height: calc(100vh - 80px); }
+
+/* Home */
+.page-title { margin-top: 6px; color: #333; text-align: center; }
+.candidates-row {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 40px;
+  gap: 48px;
+  margin-top: 28px;
+  flex-wrap: wrap;
 }
 
-.candidato-card {
-  width: 200px;
+/* Candidate card */
+.card {
+  width: 220px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 18px;
   text-align: center;
 }
-
-.candidato-card img {
-  width: 100%;
-  height: auto;
+.placeholder-image {
+  width: 160px;
+  height: 120px;
+  margin: 0 auto 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #e6f9ff, #dff6fb);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color: #007991;
 }
 
-/* ===========================
-   Ajustes para Mobile
-   =========================== */
-@media (max-width: 768px) {
-  /* Cabeçalho menor no mobile */
-  header {
-    font-size: 14px;
-    padding: 10px;
-  }
+/* Auth pages (login/signup) */
+.page.auth { display:flex; justify-content:center; align-items:flex-start; padding-top: 30px; }
+.form { width: 320px; display:flex; flex-direction:column; gap: 10px; }
+.form input { padding: 10px; border-radius:8px; border:1px solid #ddd; }
+.form button { margin-top:6px; }
 
-  header .logo {
-    font-size: 16px;
-  }
-
-  header .login-cadastro {
-    font-size: 14px;
-  }
-
-  /* Cards lado a lado e um pouco maiores */
-  .candidatos-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 30px;
-  }
-
-  .candidato-card {
-    flex: 1 1 45%; /* metade da tela cada card */
-    max-width: 160px; /* um pouquinho maior que antes */
-    font-size: 14px;
-    margin-bottom: 15px; /* espaçamento extra em telas pequenas */
-  }
-
-  .candidato-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px; /* leve arredondamento opcional */
-  }
-}
-
-/* ===========================
-   Ajustes para celulares muito pequenos
-   =========================== */
-@media (max-width: 480px) {
-  header {
-    font-size: 12px;
-    padding: 8px;
-  }
-
-  header .logo {
-    font-size: 14px;
-  }
-
-  header .login-cadastro {
-    font-size: 12px;
-  }
-
-  .candidatos-container {
-    gap: 8px;
-  }
-
-  .candidato-card {
-    flex: 1 1 48%;
-    max-width: 140px;
-    font-size: 13px;
-  }
+/* small screens */
+@media (max-width: 720px) {
+  .header { padding: 14px; }
+  .candidates-row { gap: 18px; }
+  .card { width: 46%; }
+  .form { width: 100%; padding: 0 16px; }
 }
