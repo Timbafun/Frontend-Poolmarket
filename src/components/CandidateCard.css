@@ -1,6 +1,6 @@
 .candidate-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   background-color: white;
   border-radius: 16px;
@@ -29,7 +29,7 @@
 }
 
 .candidate-votes {
-  font-size: 1rem;
+  font-size: 2rem;
   color: #333;
   margin-bottom: 15px;
 }
@@ -38,7 +38,7 @@
   background-color: #00bcd4; /* azul-turquesa */
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   padding: 10px 25px;
   font-size: 1rem;
   cursor: pointer;
@@ -47,7 +47,7 @@
 
 .vote-button:hover {
   background-color: #0097a7;
-  transform: scale(1.05);
+  transform: scale(1.10);
 }
 
 .vote-button:disabled {
