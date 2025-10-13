@@ -1,19 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-// ✅ Imports ajustados com os nomes reais
+import Header from './components/Header';
 import Home from './pages/Home';
-import Signup from './pages/Signup';
+import Register from './pages/Register';
 import Login from './pages/Login';
-
 import './App.css';
 
 function App() {
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/cadastro" element={<Signup />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
