@@ -1,12 +1,11 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
-// ✅ CORREÇÃO AQUI: Importa diretamente o Header.js da pasta components
-import Header from './components/Header'; // O React entende que é o 'Header.js'
-// OU:
-// import Header from './components/Header.js';
+// ✅ CORREÇÃO 1: Importa o Header.js diretamente (corrigido na última tentativa)
+import Header from './components/Header'; 
+// ✅ CORREÇÃO 2: Importa o Footer.js diretamente!
+import Footer from './components/Footer'; 
 
-import Footer from './components/Footer/Footer';
 import Home from './components/Home/Home';
 import Register from './components/auth/Register';
 import Login from './pages/Login'; 
