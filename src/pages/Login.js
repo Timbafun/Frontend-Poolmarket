@@ -34,10 +34,17 @@ export default function Login() {
       if (res.ok && data.ok) {
         // salva current user no localStorage
         localStorage.setItem("user", JSON.stringify(data.user));
+        
         // dispara evento para atualizar Header se necessário
         window.dispatchEvent(new Event("storage"));
+        
         alert("✅ Login efetuado com sucesso!");
-        navigate("/user-area"); // redireciona para área do usuário
+        
+        // **********************************************
+        // ✅ ÚNICA ALTERAÇÃO: Redireciona para a Página Inicial ( / )
+        navigate("/"); 
+        // **********************************************
+        
       } else {
         alert(data.message || "❌ Credenciais inválidas.");
       }
