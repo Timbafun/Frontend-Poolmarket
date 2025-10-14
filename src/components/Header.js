@@ -1,43 +1,39 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; 
 import './Header.css';
 
 const Header = () => {
-    // Usamos useNavigate apenas para o h1/logo, se preferir o clique
     const navigate = useNavigate();
-    // Pega o status de autenticação e a função de logout
-    const { isAuthenticated, logout } = useAuth(); 
+    const { isAuthenticated, logout } = useAuth();
 
     return (
         <header className="header">
-            {/* Usamos o componente Link para navegação */}
-            <h1 onClick={() => navigate('/')}>
-                <Link to="/" className="logo-link">PoolMarket</Link>
-            </h1>
+            <h1 onClick={() => navigate('/')}>PoolMarket</h1>
             <nav className="nav-links">
                 {isAuthenticated ? (
-                    // ✅ MOSTRA SE AUTENTICADO
                     <>
-                        <Link to="/user-area" className="nav-button">
+                        <button onClick={() => navigate('/user-area')} className="nav-button">
                             Área do Usuário
-                        </Link>
+                        </button>
                         <button
-                            onClick={logout} // ✅ CORREÇÃO: A função logout já redireciona no AuthContext!
+                            onClick={() => {
+                                logout();
+                                navigate('/');
+                            }}
                             className="nav-button"
                         >
                             Sair
                         </button>
                     </>
                 ) : (
-                    // ✅ MOSTRA SE NÃO AUTENTICADO
                     <>
-                        <Link to="/login" className="nav-button">
+                        <button onClick={() => navigate('/login')} className="nav-button">
                             Login
-                        </Link>
-                        <Link to="/register" className="nav-button">
+                        </button>
+                        <button onClick={() => navigate('/register')} className="nav-button">
                             Cadastro
-                        </Link>
+                        </button>
                     </>
                 )}
             </nav>
