@@ -1,18 +1,18 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
-// Importa o Header.js que está em src/components/Header.js
+// 1. Header (Caminho corrigido)
 import Header from './components/Header'; 
-// O Footer não existe, então ele é removido daqui!
-// import Footer from './components/Footer'; // REMOVIDO
+// 2. Home (CORRIGIDO AGORA)
+import Home from './components/Home'; // Assumindo que o arquivo é './components/Home.js'
+// 3. Register (Caminho mantido)
+import Register from './components/auth/Register'; 
+// 4. Login (Caminho corrigido para 'pages')
+import Login from './pages/Login'; 
+// 5. UserArea (Caminho mantido)
+import UserArea from './components/UserArea/UserArea'; 
+// 6. Footer foi removido (porque não existia)
 
-// Importa os componentes de página
-import Home from './components/Home/Home'; // Ou './pages/Home' se você o moveu para lá
-import Register from './components/auth/Register'; // Manter o caminho original
-import Login from './pages/Login'; // O caminho corrigido que definimos
-import UserArea from './components/UserArea/UserArea'; // Manter o caminho original
-
-// Importação do Contexto
 import { AuthProvider } from './context/AuthContext'; 
 
 function App() {
@@ -26,8 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/user-area" element={<UserArea />} />
         </Routes>
-        {/* O Footer foi removido do JSX para corrigir o erro */}
-        {/* <Footer /> */} 
+        {/* Footer foi removido */}
       </div>
     </AuthProvider>
   );
