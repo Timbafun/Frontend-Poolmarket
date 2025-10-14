@@ -1,35 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, logout, getVotes } from "../utils/storage";
+import { useAuth } from "../context/AuthContext";
 import "./Auth.css";
 
 export default function UserArea() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const [historico, setHistorico] = useState([]);
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
+    if (!user) {
       navigate("/login");
       return;
     }
-    setUser(currentUser);
 
-    // Histórico de votos
-    const votes = getVotes();
     const userVotes = [];
-    if (currentUser.hasVoted) {
-      if (votes.lula > 0) userVotes.push({ acao: "Votou em Lula", horario: new Date().toLocaleString() });
-      if (votes.bolsonaro > 0) userVotes.push({ acao: "Votou em Bolsonaro", horario: new Date().toLocaleString() });
+    if (user.hasVoted) {
+      if (user.votedFor === "lula") userVotes.push({ acao: "Votou em Lula", horario: new Date().toLocaleString() });
+      if (user.votedFor === "bolsonaro") userVotes.push({ acao: "Votou em Bolsonaro", horario: new Date().toLocaleString() });
     }
+
     setHistorico(userVotes);
-  }, [navigate]);
+  }, [user, navigate]);
 
   const handleLogout = () => {
     logout();
     alert("Você saiu da sua conta.");
-    window.dispatchEvent(new Event("storage")); // atualiza o Header
     navigate("/");
   };
 

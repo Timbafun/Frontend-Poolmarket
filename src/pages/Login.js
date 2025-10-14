@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
 import "./Auth.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login } = useAuth();
   
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
 
@@ -18,28 +18,26 @@ export default function Login() {
       const res = await fetch(`${BACKEND_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), senha: senha }),
+        body: JSON.stringify({ email: email.trim(), senha }),
       });
 
-      const text = await res.text();
-      let data;
-      try { 
-        data = JSON.parse(text); 
-      } catch {
-        alert("Resposta inválida do servidor.");
-        return;
-      }
+      const data = await res.json();
 
       if (res.ok && data.ok) {
-        login(data.user); // salva no localStorage e contexto
+        login(data.user); // mantém login
         alert("✅ Login efetuado com sucesso!");
-        navigate("/"); // redireciona para página inicial
+
+        if (!data.user.hasVoted) {
+          navigate("/"); // rota votação
+        } else {
+          navigate("/user-area"); // já votou
+        }
       } else {
         alert(data.message || "❌ Credenciais inválidas.");
       }
     } catch (err) {
-      alert("Erro ao tentar logar. Veja console.");
       console.error(err);
+      alert("Erro ao tentar logar.");
     }
   };
 
@@ -48,17 +46,17 @@ export default function Login() {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input 
-          type="email" 
-          placeholder="E-mail" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input 
-          type="password" 
-          placeholder="Senha" 
-          value={senha} 
-          onChange={(e) => setSenha(e.target.value)} 
+          type="password"
+          placeholder="Senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
           required
         />
         <button type="submit" className="auth-button">Entrar</button>

@@ -6,7 +6,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 🔁 Ao iniciar, tenta recuperar usuário salvo no localStorage
+  // Recupera usuário do localStorage no carregamento
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -15,14 +15,14 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // ✅ Login: salva no estado e localStorage
+  // Login: salva estado e localStorage
   const login = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // 🚪 Logout: limpa estado e localStorage
+  // Logout: limpa estado e localStorage
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);

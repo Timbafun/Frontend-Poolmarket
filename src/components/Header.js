@@ -5,7 +5,7 @@ import './Header.css';
 
 const Header = () => {
     const navigate = useNavigate();
-    const { isAuthenticated, logout } = useAuth(); // ✅ só variáveis usadas
+    const { isAuthenticated, logout } = useAuth();
 
     return (
         <header className="header">
@@ -13,10 +13,7 @@ const Header = () => {
             <nav className="nav-links">
                 {isAuthenticated ? (
                     <>
-                        <button
-                            onClick={() => navigate('/user-area')}
-                            className="nav-button"
-                        >
+                        <button onClick={() => navigate('/user-area')} className="nav-button">
                             Área do Usuário
                         </button>
                         <button
@@ -31,16 +28,10 @@ const Header = () => {
                     </>
                 ) : (
                     <>
-                        <button
-                            onClick={() => navigate('/login')}
-                            className="nav-button"
-                        >
+                        <button onClick={() => navigate('/login')} className="nav-button">
                             Login
                         </button>
-                        <button
-                            onClick={() => navigate('/register')}
-                            className="nav-button"
-                        >
+                        <button onClick={() => navigate('/register')} className="nav-button">
                             Cadastro
                         </button>
                     </>
