@@ -6,7 +6,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 🔁 Carrega login salvo (se houver)
+  // 🔁 Ao iniciar, tenta recuperar usuário salvo no localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -15,14 +15,14 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // ✅ Função de login (usada no seu Login.js)
+  // ✅ Login: salva no estado e localStorage
   const login = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // 🚪 Função de logout
+  // 🚪 Logout: limpa estado e localStorage
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
