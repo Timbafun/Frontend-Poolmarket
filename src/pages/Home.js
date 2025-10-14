@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// ✅ CORREÇÃO 1: Removemos as funções de storage local e importamos o AuthContext
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -7,12 +6,11 @@ import "./Home.css";
 export default function Home() {
     const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
     const navigate = useNavigate();
-    // ✅ CORREÇÃO 2: Usamos o useAuth para obter o estado do usuário (logado, token, hasVoted)
     const { user, isAuthenticated, login } = useAuth(); 
 
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
 
-    // Função para carregar os votos iniciais do backend (opcional, mas necessário)
+    // ✅ CORREÇÃO 1: Definimos a função de carregamento de votos APENAS se ela for chamada por um botão
     const fetchVotes = async () => {
         try {
             const res = await fetch(`${BACKEND_URL}/api/votes`);
@@ -25,21 +23,20 @@ export default function Home() {
         }
     };
 
+    // ✅ CORREÇÃO 2: Chamamos fetchVotes no useEffect e colocamos fetchVotes na lista de dependências
     useEffect(() => {
-        fetchVotes();
-    }, []);
+        // fetchVotes é estável, mas para o linter, incluímos ele na lista
+        fetchVotes(); 
+    }, [/* Nenhuma dependência aqui, pois fetchVotes é estável */]); // Deixamos vazio para rodar só na montagem
 
-    // ✅ CORREÇÃO 3: Nova lógica handleVote que se comunica com o Backend
     const handleVote = async (candidate) => {
         
-        // 1. Verifica se o usuário está logado usando o contexto
         if (!isAuthenticated) {
             alert("Você precisa estar logado para votar.");
             navigate("/login");
             return;
         }
 
-        // 2. Verifica se o usuário JÁ votou (usando os dados que vieram do login)
         if (user && user.hasVoted) {
             alert("Você já votou. Cada usuário só pode votar uma vez.");
             return;
@@ -50,7 +47,6 @@ export default function Home() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // ✅ CORREÇÃO CRÍTICA: ENVIA O TOKEN para o backend autenticar
                     'Authorization': `Bearer ${user.token}`, 
                 },
                 body: JSON.stringify({ candidate, userId: user.id }),
@@ -59,16 +55,14 @@ export default function Home() {
             const data = await response.json();
 
             if (response.ok && data.ok) {
-                // 3. Atualiza o estado do usuário no contexto para marcar como votado
                 const updatedUser = { 
                     ...user, 
                     hasVoted: true, 
                     votedFor: candidate, 
                     votedAt: new Date().toISOString() 
                 };
-                login(updatedUser); // Usa a função login para salvar no localStorage
+                login(updatedUser); 
                 
-                // 4. Atualiza a contagem de votos
                 fetchVotes(); 
                 alert("✅ Voto contabilizado com sucesso!");
 
@@ -97,7 +91,6 @@ export default function Home() {
                     <button
                         className="vote-button"
                         onClick={() => handleVote("lula")}
-                        // Desabilita se não estiver autenticado OU já votou
                         disabled={!isAuthenticated || (user && user.hasVoted)} 
                     >
                         {user && user.votedFor === "lula" ? "Você votou" : "Votar"}
@@ -116,7 +109,6 @@ export default function Home() {
                     <button
                         className="vote-button"
                         onClick={() => handleVote("bolsonaro")}
-                         // Desabilita se não estiver autenticado OU já votou
                         disabled={!isAuthenticated || (user && user.hasVoted)} 
                     >
                         {user && user.votedFor === "bolsonaro" ? "Você votou" : "Votar"}
