@@ -1,38 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getCurrentUser } from "../utils/storage"; // usa storage
-import "./Header.css";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // Importação do Contexto
+import './Header.css';
 
-export default function Header() {
-  const [isLogged, setIsLogged] = useState(false);
+const Header = () => {
+    const navigate = useNavigate();
+    // Puxa o estado e a função de logout do Contexto
+    const { isAuthenticated, logout } = useAuth(); 
 
-  useEffect(() => {
-    const checkLogin = () => {
-      const user = getCurrentUser();
-      setIsLogged(!!user);
-    };
+    return (
+        <header className="header">
+            <h1 onClick={() => navigate('/')}>PoolMarket</h1>
+            <nav className="nav-links">
+                {/* ✅ LÓGICA DE EXIBIÇÃO: MOSTRA BOTÕES DIFERENTES CONFORME O LOGIN */}
+                {isAuthenticated ? (
+                    <>
+                        <button onClick={() => navigate('/user-area')} className="nav-button">
+                            Área do Usuário
+                        </button>
+                        <button onClick={logout} className="nav-button">
+                            Sair
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button onClick={() => navigate('/login')} className="nav-button">
+                            Login
+                        </button>
+                        <button onClick={() => navigate('/register')} className="nav-button">
+                            Cadastro
+                        </button>
+                    </>
+                )}
+            </nav>
+        </header>
+    );
+};
 
-    checkLogin();
-    window.addEventListener("storage", checkLogin);
-
-    return () => window.removeEventListener("storage", checkLogin);
-  }, []);
-
-  return (
-    <header className="header">
-      <div className="logo">
-        <Link to="/" className="logo-text">PoolMarket</Link>
-      </div>
-      <nav className="nav-links">
-        {isLogged ? (
-          <Link to="/user-area" className="nav-button">Área do Usuário</Link>
-        ) : (
-          <>
-            <Link to="/login" className="nav-button">Login</Link>
-            <Link to="/signup" className="nav-button">Cadastro</Link>
-          </>
-        )}
-      </nav>
-    </header>
-  );
-}
+export default Header;

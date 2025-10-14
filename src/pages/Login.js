@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // Importação do Contexto
 import "./Auth.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
+  // Puxa a função 'login' do Contexto
+  const { login } = useAuth(); 
+  
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
 
   const handleSubmit = async (e) => {
@@ -21,8 +25,8 @@ export default function Login() {
 
       const text = await res.text();
       let data;
-      try { 
-        data = JSON.parse(text); 
+      try { 
+        data = JSON.parse(text); 
       } catch {
         console.error("🚨 Resposta não-JSON:", text);
         alert("Resposta inválida do servidor. Verifique console.");
@@ -32,19 +36,11 @@ export default function Login() {
       console.log("📡 Resposta do backend:", res.status, data);
 
       if (res.ok && data.ok) {
-        // salva current user no localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-        
-        // dispara evento para atualizar Header se necessário
-        window.dispatchEvent(new Event("storage"));
+        // ✅ CORREÇÃO ESSENCIAL: Chame a função de login do Contexto
+        login(data.user);
         
         alert("✅ Login efetuado com sucesso!");
-        
-        // **********************************************
-        // ✅ ÚNICA ALTERAÇÃO: Redireciona para a Página Inicial ( / )
-        navigate("/"); 
-        // **********************************************
-        
+        navigate("/"); // Redireciona para a Página Inicial
       } else {
         alert(data.message || "❌ Credenciais inválidas.");
       }
@@ -58,18 +54,18 @@ export default function Login() {
     <div className="auth-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input 
-          type="email" 
-          placeholder="E-mail" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
+        <input 
+          type="email" 
+          placeholder="E-mail" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
           required
         />
-        <input 
-          type="password" 
-          placeholder="Senha" 
-          value={senha} 
-          onChange={(e) => setSenha(e.target.value)} 
+        <input 
+          type="password" 
+          placeholder="Senha" 
+          value={senha} 
+          onChange={(e) => setSenha(e.target.value)} 
           required
         />
         <button type="submit" className="auth-button">Entrar</button>
