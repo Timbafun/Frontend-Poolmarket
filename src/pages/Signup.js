@@ -1,73 +1,59 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import "./Auth.css";
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [form, setForm] = useState({ nome: "", email: "", telefone: "", cpf: "", senha: "", confirmar: "" });
   const navigate = useNavigate();
-  const { login } = useAuth();
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
-
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validação de senha
+    if (form.senha !== form.confirmar) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
     try {
-      const res = await fetch(`${BACKEND_URL}/api/register`, {
+      const BACKEND_URL = "https://backend-poolmarket.onrender.com";
+
+      const response = await fetch(`${BACKEND_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), senha, cpf: cpf.trim() }),
+        body: JSON.stringify({
+          nome: form.nome,
+          email: form.email,
+          telefone: form.telefone,
+          cpf: form.cpf,
+          senha: form.senha
+        }),
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (res.ok && data.ok) {
-        login(data.user); // login automático após cadastro
-        alert("✅ Cadastro efetuado com sucesso!");
-
-        // Redireciona direto para votação se não votou ainda
-        if (!data.user.hasVoted) {
-          navigate("/"); // rota da votação
-        } else {
-          navigate("/user-area");
-        }
+      if (data.ok) {
+        alert("Cadastro efetuado com sucesso!");
+        navigate("/"); // redireciona logado mantendo layout
       } else {
-        alert(data.message || "❌ Erro no cadastro.");
+        alert(data.message);
       }
     } catch (err) {
       console.error(err);
-      alert("Erro ao tentar cadastrar.");
+      alert("Erro ao cadastrar usuário.");
     }
   };
 
   return (
     <div className="auth-container">
       <h2>Cadastro</h2>
-      <form onSubmit={handleSignup}>
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="CPF"
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          required
-        />
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Nome completo" onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+        <input type="email" placeholder="E-mail" onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        <input type="text" placeholder="Telefone" onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+        <input type="text" placeholder="CPF" onChange={(e) => setForm({ ...form, cpf: e.target.value })} />
+        <input type="password" placeholder="Senha" onChange={(e) => setForm({ ...form, senha: e.target.value })} />
+        <input type="password" placeholder="Confirmar senha" onChange={(e) => setForm({ ...form, confirmar: e.target.value })} />
         <button type="submit" className="auth-button">Cadastrar</button>
       </form>
     </div>
