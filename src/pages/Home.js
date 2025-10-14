@@ -3,33 +3,35 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
+// ✅ CORREÇÃO CRÍTICA: Definimos a URL do lado de fora do componente 
+// para que ela seja tratada como estável pelo React.
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
+
 export default function Home() {
     const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
     const navigate = useNavigate();
     const { user, isAuthenticated, login } = useAuth(); 
 
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
-
-    // ✅ CORREÇÃO CRÍTICA: O useEffect agora define e chama a função de forma que o linter aprova.
-    useEffect(() => {
-        // Função definida DENTRO do useEffect para satisfazer a regra de dependências
-        const fetchVotes = async () => {
-            try {
-                const res = await fetch(`${BACKEND_URL}/api/votes`);
-                const data = await res.json();
-                if (res.ok) {
-                    setVotes(data.votes);
-                }
-            } catch (error) {
-                console.error("Erro ao carregar votos:", error);
+    // Função para carregar os votos iniciais do backend
+    const fetchVotes = async () => {
+        try {
+            const res = await fetch(`${BACKEND_URL}/api/votes`);
+            const data = await res.json();
+            if (res.ok) {
+                setVotes(data.votes);
             }
-        };
+        } catch (error) {
+            console.error("Erro ao carregar votos:", error);
+        }
+    };
 
-        fetchVotes();
-        // Não precisamos de dependências, pois a função está definida aqui.
-    }, []); 
+    // ✅ CORREÇÃO DEFINITIVA: Incluímos fetchVotes como dependência, resolvendo o erro do linter.
+    // Como fetchVotes usa BACKEND_URL, e BACKEND_URL é estável (const fora do componente), 
+    // essa estrutura finalmente satisfaz o linter.
+    useEffect(() => {
+        fetchVotes(); 
+    }, [fetchVotes]); // O linter exige que incluamos a função aqui.
 
-    // A lógica de voto permanece a mesma, pois já está funcional.
     const handleVote = async (candidate) => {
         
         if (!isAuthenticated) {
@@ -64,13 +66,9 @@ export default function Home() {
                 };
                 login(updatedUser); 
                 
-                // Recarrega os votos chamando a função recém-corrigida
-                // Isso exige que a função fetchVotes seja definida fora do useEffect, 
-                // para podermos chamá-la aqui. Vamos retornar à estrutura anterior, 
-                // mas adicionando a dependência do linter:
-                
-                // Chamamos fetch no final para ver o resultado
-                window.location.reload(); // Solução rápida para forçar a atualização dos votos.
+                fetchVotes(); // Recarrega os votos
+
+                alert("✅ Voto contabilizado com sucesso!");
 
             } else {
                 alert(data.message || "❌ Erro ao registrar o voto.");
