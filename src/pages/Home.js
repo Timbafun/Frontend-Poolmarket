@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react"; // ✅ ADIÇÃO: Importamos useCallback
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
-// ✅ CORREÇÃO CRÍTICA: Definimos a URL do lado de fora do componente 
-// para que ela seja tratada como estável pelo React.
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
 
 export default function Home() {
@@ -12,8 +10,8 @@ export default function Home() {
     const navigate = useNavigate();
     const { user, isAuthenticated, login } = useAuth(); 
 
-    // Função para carregar os votos iniciais do backend
-    const fetchVotes = async () => {
+    // ✅ CORREÇÃO CRÍTICA: Envolvemos a função fetchVotes com useCallback
+    const fetchVotes = useCallback(async () => {
         try {
             const res = await fetch(`${BACKEND_URL}/api/votes`);
             const data = await res.json();
@@ -23,14 +21,13 @@ export default function Home() {
         } catch (error) {
             console.error("Erro ao carregar votos:", error);
         }
-    };
+    }, [BACKEND_URL]); // Dependência: BACKEND_URL
 
-    // ✅ CORREÇÃO DEFINITIVA: Incluímos fetchVotes como dependência, resolvendo o erro do linter.
-    // Como fetchVotes usa BACKEND_URL, e BACKEND_URL é estável (const fora do componente), 
-    // essa estrutura finalmente satisfaz o linter.
+    // O useEffect que chamava fetchVotes
     useEffect(() => {
         fetchVotes(); 
-    }, [fetchVotes]); // O linter exige que incluamos a função aqui.
+    }, [fetchVotes]); // Agora fetchVotes é uma dependência estável (graças ao useCallback)
+
 
     const handleVote = async (candidate) => {
         
