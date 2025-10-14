@@ -1,24 +1,28 @@
-import React from "react";
+import React from 'react';
 import { Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import UserArea from "./pages/UserArea"; // nova página
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
+import Home from './components/Home/Home';
+import Register from './components/auth/Register';
+import Login from './pages/Login'; // Garanta que está importando de 'pages'
+import UserArea from './components/UserArea/UserArea'; 
+import { AuthProvider } from './context/AuthContext'; 
 
 function App() {
   return (
-    <div className="app">
-      <Header />
-      <main>
+    <AuthProvider>
+      <div className="App">
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/user-area" element={<UserArea />} /> {/* rota funcional */}
+          <Route path="/user-area" element={<UserArea />} />
+          {/* Mantenha suas outras rotas aqui */}
         </Routes>
-      </main>
-    </div>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
 

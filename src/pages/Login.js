@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // Importação do Contexto
-import "./Auth.css";
+// ✅ CORREÇÃO: Apenas um '../' para ir de 'pages' para 'src' e depois para 'context'
+import { useAuth } from "../context/AuthContext"; 
+import "./Auth.css"; // Mantenha o seu caminho original para o CSS
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
-  // Puxa a função 'login' do Contexto
   const { login } = useAuth(); 
   
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
@@ -36,11 +36,9 @@ export default function Login() {
       console.log("📡 Resposta do backend:", res.status, data);
 
       if (res.ok && data.ok) {
-        // ✅ CORREÇÃO ESSENCIAL: Chame a função de login do Contexto
         login(data.user);
-        
         alert("✅ Login efetuado com sucesso!");
-        navigate("/"); // Redireciona para a Página Inicial
+        navigate("/"); // Redirecionamento para a página inicial
       } else {
         alert(data.message || "❌ Credenciais inválidas.");
       }

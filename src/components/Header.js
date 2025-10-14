@@ -1,18 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Importação do Contexto
+// ✅ CORREÇÃO: Dois '../' para ir de 'Header' para 'components' para 'src' e depois para 'context'
+import { useAuth } from '../../context/AuthContext'; 
 import './Header.css';
 
 const Header = () => {
     const navigate = useNavigate();
-    // Puxa o estado e a função de logout do Contexto
     const { isAuthenticated, logout } = useAuth(); 
 
     return (
         <header className="header">
             <h1 onClick={() => navigate('/')}>PoolMarket</h1>
             <nav className="nav-links">
-                {/* ✅ LÓGICA DE EXIBIÇÃO: MOSTRA BOTÕES DIFERENTES CONFORME O LOGIN */}
                 {isAuthenticated ? (
                     <>
                         <button onClick={() => navigate('/user-area')} className="nav-button">
