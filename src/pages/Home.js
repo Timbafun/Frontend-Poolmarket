@@ -1,6 +1,9 @@
+// src/pages/Home.js
+
 import React, { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext"; // Importa o contexto de autenticação
+import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
+import PixModal from "../components/PixModal"; // ✅ NOVO: Importa o componente de PIX
 import "./Home.css";
 
 // URL do seu Backend (Importado do .env do Netlify)
@@ -8,11 +11,12 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolma
 
 export default function Home() {
     const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
+    const [pixData, setPixData] = useState(null); // ✅ NOVO: Estado para guardar o QR Code/Copia-e-Cola
     const navigate = useNavigate();
-    // CRÍTICO: Usa o useAuth para pegar o status logado, usuário e a função login (para atualizar o estado de voto)
-    const { user, isAuthenticated, login } = useAuth(); 
+    
+    const { user, isAuthenticated } = useAuth(); // Já ajustado para pegar o user correto
 
-    // ✅ CORREÇÃO LINTER: Função para buscar votos do Backend
+    // Função para buscar votos do Backend
     const fetchVotes = useCallback(async () => {
         try {
             const res = await fetch(`${BACKEND_URL}/api/votes`);
@@ -23,63 +27,80 @@ export default function Home() {
         } catch (error) {
             console.error("Erro ao carregar votos:", error);
         }
-    }, []); // Lista de dependências vazia para o linter
+    }, []); 
 
-    // 1. Carrega os votos na inicialização
+    // Carrega os votos na inicialização
     useEffect(() => {
         fetchVotes(); 
-    }, [fetchVotes]); // Dependência: fetchVotes (que é estável graças ao useCallback)
+    }, [fetchVotes]); 
 
 
-    // 2. Lógica de Voto REAL (Envia requisição para o Backend)
+    // Lógica de Voto: AGORA GERA O PIX
     const handleVote = async (candidate) => {
         
-        // 🔑 VERIFICAÇÃO FINAL: Garante que o usuário esteja logado E que tenha o Token JWT
+        // Valor fixo de contribuição para o voto
+        const VOTE_AMOUNT = 1.00; 
+
         if (!isAuthenticated || !user || !user.token) {
             alert("Você precisa estar logado para votar.");
             navigate("/login");
             return;
         }
-
-        // Verifica se o usuário já votou (usando o estado do Frontend)
-        if (user && user.hasVoted) {
+        
+        if (user.hasVoted) {
             alert("Você já votou. Cada usuário só pode votar uma vez.");
             return;
         }
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/vote`, {
+            // ✅ CHAMA A NOVA ROTA DE GERAÇÃO DE PIX
+            const response = await fetch(`${BACKEND_URL}/api/generate-pix`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // CRÍTICO: Envia o Token JWT que o Backend precisa para autenticar
-                    'Authorization': `Bearer ${user.token}`, 
+                    'Authorization': `Bearer ${user.token}`,
                 },
-                body: JSON.stringify({ candidate, userId: user.id }),
+                body: JSON.stringify({ 
+                    candidate, 
+                    amount: VOTE_AMOUNT // Envia o valor fixo
+                }),
             });
 
             const data = await response.json();
 
             if (response.ok && data.ok) {
-                // Atualiza o usuário no Context e localStorage com o novo status (hasVoted: true)
-                login(data.user); 
+                // ✅ Salva os dados do PIX para abrir o modal
+                setPixData({ 
+                    qrCodeUrl: data.qrCodeUrl, 
+                    pixCode: data.pixCode, 
+                    candidate 
+                });
                 
-                fetchVotes(); // Recarrega os votos
-
-                alert("✅ Voto contabilizado com sucesso!");
-
             } else {
-                alert(data.message || "❌ Erro ao registrar o voto.");
+                alert(data.message || "❌ Erro ao iniciar a transação PIX. Verifique suas credenciais.");
             }
         } catch (error) {
-            console.error("🔥 Erro ao votar:", error);
-            alert("Erro de comunicação com o servidor ao tentar votar.");
+            console.error("🔥 Erro ao gerar PIX:", error);
+            alert("Erro de comunicação ao tentar gerar PIX.");
         }
     };
 
-    // --- Layout (Nenhuma alteração de estrutura) ---
+    
     return (
         <div className="page home">
+            {/* ✅ NOVO: Renderiza o modal/componente de PIX se pixData existir */}
+            {pixData && (
+                <PixModal 
+                    qrCodeUrl={pixData.qrCodeUrl} 
+                    pixCode={pixData.pixCode} 
+                    candidate={pixData.candidate}
+                    onClose={() => {
+                        setPixData(null); 
+                        fetchVotes(); // Recarrega os votos ao fechar para ver se o pagamento entrou
+                    }}
+                />
+            )}
+            
             <h2 className="page-title">Candidatos</h2>
             <div className="candidates-row">
                 <div className="candidate">
