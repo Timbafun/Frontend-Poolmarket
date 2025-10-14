@@ -37,26 +37,35 @@ export function registerUser(user) {
   const users = getUsers();
 
   const cpfClean = cleanCPF(user.cpf);
+
   // verifica duplicidade de CPF ou email
-  if (users.some(u => cleanCPF(u.cpf) === cpfClean)) {
+  if (users.some((u) => cleanCPF(u.cpf) === cpfClean)) {
     return { ok: false, message: "CPF já cadastrado." };
   }
-  if (users.some(u => u.email === user.email)) {
+  if (users.some((u) => u.email === user.email)) {
     return { ok: false, message: "E-mail já cadastrado." };
   }
 
+  // cria novo usuário
   const newUser = { ...user, cpf: cpfClean, hasVoted: false };
   users.push(newUser);
   saveUsers(users);
+
+  // 🔹 novo: deixa o usuário automaticamente logado após o cadastro
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(newUser));
+
   return { ok: true, user: newUser };
 }
 
 export function loginUser(email, senha) {
   ensureInit();
   const users = getUsers();
-  const user = users.find(u => u.email === email && u.senha === senha);
+  const user = users.find((u) => u.email === email && u.senha === senha);
   if (!user) return { ok: false, message: "Credenciais inválidas." };
+
+  // 🔹 salva usuário logado
   localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
+
   return { ok: true, user };
 }
 
@@ -73,11 +82,16 @@ export function updateCurrentUser(user) {
   // atualiza usuário no CURRENT_KEY e na lista de users
   localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
   const users = getUsers();
-  const idx = users.findIndex(u => cleanCPF(u.cpf) === cleanCPF(user.cpf));
+  const idx = users.findIndex((u) => cleanCPF(u.cpf) === cleanCPF(user.cpf));
   if (idx !== -1) {
     users[idx] = user;
     saveUsers(users);
   }
+}
+
+// 🔹 novo: função auxiliar para salvar usuário logado (usada no Home.js)
+export function saveCurrentUser(user) {
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
 }
 
 export function castVote(candidate, cpf) {
@@ -85,7 +99,7 @@ export function castVote(candidate, cpf) {
   ensureInit();
   const users = getUsers();
   const cpfClean = cleanCPF(cpf);
-  const userIdx = users.findIndex(u => cleanCPF(u.cpf) === cpfClean);
+  const userIdx = users.findIndex((u) => cleanCPF(u.cpf) === cpfClean);
   if (userIdx === -1) return { ok: false, message: "Usuário não encontrado." };
 
   const user = users[userIdx];
@@ -93,24 +107,4 @@ export function castVote(candidate, cpf) {
 
   // registra voto
   const votes = getVotes();
-  if (!(candidate in votes)) return { ok: false, message: "Candidato inválido." };
-  votes[candidate] = (votes[candidate] || 0) + 1;
-  saveVotes(votes);
-
-  // marca usuário como votou
-  users[userIdx] = { ...user, hasVoted: true };
-  saveUsers(users);
-
-  // se estiver logado, atualiza CURRENT
-  const current = getCurrentUser();
-  if (current && cleanCPF(current.cpf) === cpfClean) {
-    updateCurrentUser(users[userIdx]);
-  }
-
-  return { ok: true };
-}
-
-export function cleanCPF(cpf) {
-  if (!cpf) return "";
-  return cpf.replace(/\D/g, "");
-}
+  if (!(candidate in votes)) return { ok: false, message: "Candidato inv

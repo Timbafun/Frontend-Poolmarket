@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getVotes, getCurrentUser, castVote } from "../utils/storage";
+import { getVotes, getCurrentUser, castVote, saveCurrentUser } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
@@ -10,25 +10,48 @@ export default function Home() {
 
   useEffect(() => {
     setVotes(getVotes());
-    const t = setInterval(() => setUser(getCurrentUser()), 500);
-    return () => clearInterval(t);
+
+    // Atualiza o usuário logado em tempo real
+    const interval = setInterval(() => {
+      const current = getCurrentUser();
+      setUser(current);
+    }, 500);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleVote = (candidate) => {
     const current = getCurrentUser();
+
+    // Se o usuário não estiver logado
     if (!current) {
-      if (!window.confirm("Você precisa estar logado para votar. Ir para Login?")) return;
+      alert("Você precisa estar logado para votar.");
       navigate("/login");
       return;
     }
 
-    const res = castVote(candidate, current.cpf);
-    if (!res.ok) {
-      alert(res.message);
-    } else {
-      setVotes(getVotes());
-      alert("Voto contabilizado!");
+    // Verifica se o usuário já votou
+    if (current.hasVoted) {
+      alert("Você já votou. Cada usuário só pode votar uma vez.");
+      return;
     }
+
+    // Registra o voto
+    const result = castVote(candidate, current.email || current.cpf);
+
+    if (!result.ok) {
+      alert(result.message);
+      return;
+    }
+
+    // Marca o usuário como já votante
+    const updatedUser = { ...current, hasVoted: true, votedFor: candidate, votedAt: new Date().toISOString() };
+    saveCurrentUser(updatedUser);
+
+    setVotes(getVotes());
+    setUser(updatedUser);
+
+    alert("✅ Voto contabilizado com sucesso!");
   };
 
   return (
@@ -48,7 +71,7 @@ export default function Home() {
             onClick={() => handleVote("lula")}
             disabled={user && user.hasVoted}
           >
-            Votar
+            {user && user.hasVoted && user.votedFor === "lula" ? "Você votou" : "Votar"}
           </button>
         </div>
 
@@ -66,7 +89,7 @@ export default function Home() {
             onClick={() => handleVote("bolsonaro")}
             disabled={user && user.hasVoted}
           >
-            Votar
+            {user && user.hasVoted && user.votedFor === "bolsonaro" ? "Você votou" : "Votar"}
           </button>
         </div>
       </div>
