@@ -1,17 +1,12 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
-// 1. Header (Caminho corrigido)
-import Header from './components/Header'; 
-// 2. Home (CORRIGIDO AGORA)
-import Home from './components/Home'; // Assumindo que o arquivo é './components/Home.js'
-// 3. Register (Caminho mantido)
-import Register from './components/auth/Register'; 
-// 4. Login (Caminho corrigido para 'pages')
-import Login from './pages/Login'; 
-// 5. UserArea (Caminho mantido)
-import UserArea from './components/UserArea/UserArea'; 
-// 6. Footer foi removido (porque não existia)
+// Importações Corrigidas (Baseado na estrutura do seu repositório)
+import Header from './components/Header'; // Components Header.js
+import Home from './pages/Home'; // Pages Home.js
+import Login from './pages/Login'; // Pages Login.js
+import Register from './pages/Signup'; // Pages Signup.js (Assumindo que é o cadastro)
+import UserArea from './pages/UserArea'; // Pages UserArea.js
 
 import { AuthProvider } from './context/AuthContext'; 
 
@@ -26,7 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/user-area" element={<UserArea />} />
         </Routes>
-        {/* Footer foi removido */}
+        {/* Footer não existe no repo e foi removido */}
       </div>
     </AuthProvider>
   );
