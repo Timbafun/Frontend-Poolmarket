@@ -1,53 +1,134 @@
 // src/utils/storage.js
 
-// Funções utilitárias para gerenciar dados no localStorage
+// key names
+const USERS_KEY = "pm_users";
+const VOTES_KEY = "pm_votes";
+const CURRENT_KEY = "pm_currentUser";
 
-// Salvar usuário no localStorage
-export const saveUser = (user) => {
-  localStorage.setItem("user", JSON.stringify(user));
-};
+// inicializa storage se necessário
+function ensureInit() {
+  if (!localStorage.getItem(USERS_KEY)) localStorage.setItem(USERS_KEY, JSON.stringify([]));
+  if (!localStorage.getItem(VOTES_KEY)) {
+    // inicializa com os dois candidatos
+    const initial = { lula: 0, bolsonaro: 0 };
+    localStorage.setItem(VOTES_KEY, JSON.stringify(initial));
+  }
+}
 
-// Obter usuário do localStorage
-export const getUser = () => {
-  const data = localStorage.getItem("user");
-  return data ? JSON.parse(data) : null;
-};
+export function getUsers() {
+  ensureInit();
+  return JSON.parse(localStorage.getItem(USERS_KEY));
+}
 
-// Remover usuário do localStorage
-export const removeUser = () => {
-  localStorage.removeItem("user");
-};
+export function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
 
-// ------------------------------
-// Funções de votos (mock local)
-// ------------------------------
+export function getVotes() {
+  ensureInit();
+  return JSON.parse(localStorage.getItem(VOTES_KEY));
+}
 
-// Recupera votos armazenados
-export const getVotes = () => {
-  const data = localStorage.getItem("votes");
-  return data ? JSON.parse(data) : { lula: 0, bolsonaro: 0 };
-};
+export function saveVotes(votes) {
+  localStorage.setItem(VOTES_KEY, JSON.stringify(votes));
+}
 
-// Salva votos
-export const saveVotes = (votes) => {
-  localStorage.setItem("votes", JSON.stringify(votes));
-};
+export function registerUser(user) {
+  // user: { nome, email, telefone, cpf, senha }
+  ensureInit();
+  const users = getUsers();
 
-// Registra voto para um candidato
-export const addVote = (candidate) => {
-  // recupera votos
-  const votes = getVotes();
+  const cpfClean = cleanCPF(user.cpf);
 
-  // verifica se o candidato existe
-  if (!(candidate in votes)) {
-    return { ok: false, message: "Candidato inválido." };
+  // verifica duplicidade de CPF ou email
+  if (users.some((u) => cleanCPF(u.cpf) === cpfClean)) {
+    return { ok: false, message: "CPF já cadastrado." };
+  }
+  if (users.some((u) => u.email === user.email)) {
+    return { ok: false, message: "E-mail já cadastrado." };
   }
 
-  // incrementa o voto
-  votes[candidate] += 1;
+  const newUser = { ...user, cpf: cpfClean, hasVoted: false };
+  users.push(newUser);
+  saveUsers(users);
 
-  // salva novamente
+  // deixa o usuário automaticamente logado após o cadastro
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(newUser));
+
+  return { ok: true, user: newUser };
+}
+
+export function loginUser(email, senha) {
+  ensureInit();
+  const users = getUsers();
+  const user = users.find((u) => u.email === email && u.senha === senha);
+  if (!user) return { ok: false, message: "Credenciais inválidas." };
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
+  return { ok: true, user };
+}
+
+export function logout() {
+  localStorage.removeItem(CURRENT_KEY);
+}
+
+export function getCurrentUser() {
+  const s = localStorage.getItem(CURRENT_KEY);
+  return s ? JSON.parse(s) : null;
+}
+
+export function updateCurrentUser(user) {
+  // atualiza usuário no CURRENT_KEY e na lista de users
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
+  const users = getUsers();
+  const idx = users.findIndex((u) => cleanCPF(u.cpf) === cleanCPF(user.cpf));
+  if (idx !== -1) {
+    users[idx] = user;
+    saveUsers(users);
+  }
+}
+
+// função auxiliar para salvar usuário logado (compatibilidade com chamadas anteriores)
+export function saveCurrentUser(user) {
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
+}
+
+export function castVote(candidate, cpf) {
+  // retorna { ok, message }
+  ensureInit();
+  const users = getUsers();
+  const cpfClean = cleanCPF(cpf);
+  const userIdx = users.findIndex((u) => cleanCPF(u.cpf) === cpfClean);
+  if (userIdx === -1) return { ok: false, message: "Usuário não encontrado." };
+
+  const user = users[userIdx];
+  if (user.hasVoted) return { ok: false, message: "CPF já votou." };
+
+  // registra voto
+  const votes = getVotes();
+  if (!(candidate in votes)) return { ok: false, message: "Candidato inválido." };
+  votes[candidate] = (votes[candidate] || 0) + 1;
   saveVotes(votes);
 
-  return { ok: true, message: "Voto registrado com sucesso!" };
-};
+  // marca usuário como votou e guarda info de voto
+  const updatedUser = {
+    ...user,
+    hasVoted: true,
+    votedFor: candidate,
+    votedAt: new Date().toISOString(),
+  };
+  users[userIdx] = updatedUser;
+  saveUsers(users);
+
+  // se estiver logado, atualiza CURRENT
+  const current = getCurrentUser();
+  if (current && cleanCPF(current.cpf) === cpfClean) {
+    updateCurrentUser(updatedUser);
+  }
+
+  return { ok: true };
+}
+
+export function cleanCPF(cpf) {
+  if (!cpf) return "";
+  return cpf.replace(/\D/g, "");
+}
