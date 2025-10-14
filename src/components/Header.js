@@ -1,12 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-// ✅ CORREÇÃO: Dois '../' para ir de 'Header' para 'components' para 'src' e depois para 'context'
 import { useAuth } from '../../context/AuthContext'; 
 import './Header.css';
 
 const Header = () => {
     const navigate = useNavigate();
-    const { isAuthenticated, logout } = useAuth(); 
+    const { user, isAuthenticated, logout } = useAuth(); // ✅ agora `user` e `isAuthenticated` vêm do contexto
 
     return (
         <header className="header">
@@ -17,7 +16,13 @@ const Header = () => {
                         <button onClick={() => navigate('/user-area')} className="nav-button">
                             Área do Usuário
                         </button>
-                        <button onClick={logout} className="nav-button">
+                        <button
+                            onClick={() => {
+                                logout();
+                                navigate('/');
+                            }}
+                            className="nav-button"
+                        >
                             Sair
                         </button>
                     </>
