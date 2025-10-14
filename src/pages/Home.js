@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react"; // ✅ ADIÇÃO: Importamos useCallback
+import React, { useEffect, useState, useCallback } from "react"; 
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
+// URL definida fora do componente, tornando-a estável
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolmarket.onrender.com";
 
 export default function Home() {
@@ -10,9 +11,10 @@ export default function Home() {
     const navigate = useNavigate();
     const { user, isAuthenticated, login } = useAuth(); 
 
-    // ✅ CORREÇÃO CRÍTICA: Envolvemos a função fetchVotes com useCallback
+    // ✅ CORREÇÃO FINAL: Removemos a BACKEND_URL das dependências do useCallback
     const fetchVotes = useCallback(async () => {
         try {
+            // Usa BACKEND_URL que é global
             const res = await fetch(`${BACKEND_URL}/api/votes`);
             const data = await res.json();
             if (res.ok) {
@@ -21,12 +23,12 @@ export default function Home() {
         } catch (error) {
             console.error("Erro ao carregar votos:", error);
         }
-    }, [BACKEND_URL]); // Dependência: BACKEND_URL
+    }, []); // <--- Lista de dependências AGORA ESTÁ VAZIA!
 
-    // O useEffect que chamava fetchVotes
+    // O useEffect chama fetchVotes e precisa dele na dependência
     useEffect(() => {
         fetchVotes(); 
-    }, [fetchVotes]); // Agora fetchVotes é uma dependência estável (graças ao useCallback)
+    }, [fetchVotes]); // fetchVotes é uma dependência estável
 
 
     const handleVote = async (candidate) => {
@@ -76,7 +78,7 @@ export default function Home() {
         }
     };
 
-    // Seu código JSX (Layout) permanece o mesmo.
+    // O restante do seu JSX (Layout) permanece o mesmo.
     return (
         <div className="page home">
             <h2 className="page-title">Candidatos</h2>
