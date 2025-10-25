@@ -1,9 +1,7 @@
-// src/pages/Home.js
-
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
-import PixModal from "../components/PixModal"; // ✅ NOVO: Importa o componente de PIX
+import PixModal from "../components/PixModal"; 
 import "./Home.css";
 
 // URL do seu Backend (Importado do .env do Netlify)
@@ -11,10 +9,10 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://backend-poolma
 
 export default function Home() {
     const [votes, setVotes] = useState({ lula: 0, bolsonaro: 0 });
-    const [pixData, setPixData] = useState(null); // ✅ NOVO: Estado para guardar o QR Code/Copia-e-Cola
+    const [pixData, setPixData] = useState(null); 
     const navigate = useNavigate();
     
-    const { user, isAuthenticated } = useAuth(); // Já ajustado para pegar o user correto
+    const { user, isAuthenticated } = useAuth();
 
     // Função para buscar votos do Backend
     const fetchVotes = useCallback(async () => {
@@ -22,10 +20,12 @@ export default function Home() {
             const res = await fetch(`${BACKEND_URL}/api/votes`);
             const data = await res.json();
             if (res.ok) {
-                setVotes(data.votes);
+                // CORREÇÃO CRÍTICA AQUI: O Backend retorna o objeto de votos DIRETAMENTE.
+                setVotes(data); 
             }
         } catch (error) {
             console.error("Erro ao carregar votos:", error);
+            // Se o erro de comunicação continuar, é problema de Backend (CORS, servidor down)
         }
     }, []); 
 
@@ -47,6 +47,8 @@ export default function Home() {
             return;
         }
         
+        // CORREÇÃO: Certifique-se de que user.hasVoted está sendo lido corretamente.
+        // Se o Backend estiver retornando a propriedade em camelCase ou snake_case diferente, adapte aqui.
         if (user.hasVoted) {
             alert("Você já votou. Cada usuário só pode votar uma vez.");
             return;
@@ -88,7 +90,6 @@ export default function Home() {
     
     return (
         <div className="page home">
-            {/* ✅ NOVO: Renderiza o modal/componente de PIX se pixData existir */}
             {pixData && (
                 <PixModal 
                     qrCodeUrl={pixData.qrCodeUrl} 
