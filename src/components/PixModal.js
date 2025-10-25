@@ -62,9 +62,26 @@ const PixModal = ({ qrCodeUrl, pixCode, candidate, onClose }) => {
     
     // Função para copiar o código PIX
     const copyPixCode = () => {
-        navigator.clipboard.writeText(pixCode);
-        alert("Código PIX Copia e Cola copiado com sucesso!");
+        if (pixCode) {
+            navigator.clipboard.writeText(pixCode);
+            alert("Código PIX Copia e Cola copiado com sucesso!");
+        }
     };
+    
+    // CORREÇÃO: Renderização Condicional
+    if (!qrCodeUrl || !pixCode) {
+        return (
+            <div style={modalStyles.backdrop}>
+                <div style={modalStyles.modal}>
+                    <h3>Gerando PIX...</h3>
+                    <p>Aguarde enquanto a cobrança é processada.</p>
+                    <button onClick={onClose} style={modalStyles.closeButton}>
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div style={modalStyles.backdrop}>
@@ -79,7 +96,7 @@ const PixModal = ({ qrCodeUrl, pixCode, candidate, onClose }) => {
                     <div className="pix-code-area">
                         <h4>PIX Copia e Cola</h4>
                         <div style={modalStyles.codeBox}>
-                            {/* Mostra um preview e o código completo para cópia */}
+                            {/* CORREÇÃO APLICADA: Uso seguro de substring */}
                             {pixCode.substring(0, 50)}...
                         </div>
                         <button onClick={copyPixCode} style={modalStyles.copyButton}>
