@@ -1,7 +1,6 @@
-// src/components/PixModal.js
 import React from 'react';
 
-// Estilos básicos para o modal (você pode precisar adicionar um arquivo CSS)
+// Estilos básicos para o modal
 const modalStyles = {
     backdrop: {
         position: 'fixed',
@@ -60,6 +59,12 @@ const modalStyles = {
 
 const PixModal = ({ qrCodeUrl, pixCode, candidate, onClose }) => {
     
+    // Se o Home.js está renderizando o modal, ele JÁ DEVE ter os dados.
+    if (!qrCodeUrl || !pixCode || !candidate) {
+        // Log de erro de segurança, caso Home.js passe dados vazios.
+        return null;
+    }
+
     // Função para copiar o código PIX
     const copyPixCode = () => {
         if (pixCode) {
@@ -68,21 +73,7 @@ const PixModal = ({ qrCodeUrl, pixCode, candidate, onClose }) => {
         }
     };
     
-    // CORREÇÃO: Renderização Condicional
-    if (!qrCodeUrl || !pixCode) {
-        return (
-            <div style={modalStyles.backdrop}>
-                <div style={modalStyles.modal}>
-                    <h3>Gerando PIX...</h3>
-                    <p>Aguarde enquanto a cobrança é processada.</p>
-                    <button onClick={onClose} style={modalStyles.closeButton}>
-                        Fechar
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
+    // Apenas a renderização final é mantida.
     return (
         <div style={modalStyles.backdrop}>
             <div style={modalStyles.modal}>
@@ -96,7 +87,6 @@ const PixModal = ({ qrCodeUrl, pixCode, candidate, onClose }) => {
                     <div className="pix-code-area">
                         <h4>PIX Copia e Cola</h4>
                         <div style={modalStyles.codeBox}>
-                            {/* CORREÇÃO APLICADA: Uso seguro de substring */}
                             {pixCode.substring(0, 50)}...
                         </div>
                         <button onClick={copyPixCode} style={modalStyles.copyButton}>
