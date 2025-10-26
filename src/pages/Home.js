@@ -63,12 +63,14 @@ export default function Home() {
             if (response.ok && data.ok) {
                 
                 if (data.qrCodeUrl && data.pixCode) {
+                    // Ação: Preenche o pixData para abrir o modal
                     setPixData({ 
                         qrCodeUrl: data.qrCodeUrl, 
                         pixCode: data.pixCode, 
                         candidate 
                     });
                 } else {
+                    // Transação pendente ou já paga, mas sem dados de QR Code (voto concluído).
                     alert(data.message || "Seu voto está aguardando confirmação ou já foi processado.");
                 }
                 
