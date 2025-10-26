@@ -81,58 +81,58 @@ export default function Home() {
         }
     };
 
-    
-    return (
-        <div className="page home">
-            {pixData && (
-                <PixModal 
-                    qrCodeUrl={pixData.qrCodeUrl} 
-                    pixCode={pixData.pixCode} 
-                    candidate={pixData.candidate}
-                    onClose={() => {
-                        setPixData(null); 
-                        fetchVotes(); 
-                    }}
-                />
-            )}
-            
-            <h2 className="page-title">Candidatos</h2>
-            <div className="candidates-row">
-                <div className="candidate">
-                    <img
-                        src="/images/lula.jpg"
-                        alt="Lula"
-                        className="candidate-photo"
-                    />
-                    <h3>Lula</h3>
-                    <p>{votes.lula || 0} votos</p>
-                    <button
-                        className="vote-button"
-                        onClick={() => handleVote("lula")}
-                        disabled={!isAuthenticated || (user && user.hasVoted)} 
-                    >
-                        {user?.votedFor === "lula" ? "Você votou" : "Votar"}
-                    </button>
-                </div>
+    return (
+        <div className="page home">
+            {pixData && (
+                <PixModal 
+                    qrCodeUrl={pixData.qrCodeUrl} 
+                    pixCode={pixData.pixCode} 
+                    candidate={pixData.candidate}
+                    onClose={() => {
+                        setPixData(null); 
+                        fetchVotes(); // Recarrega os votos ao fechar para ver se o pagamento entrou
+                    }}
+                />
+            )}
+            
+            <h2 className="page-title">Candidatos</h2>
+            <div className="candidates-row">
+                <div className="candidate">
+                    <img
+                        src="/images/lula.jpg"
+                        alt="Lula"
+                        className="candidate-photo"
+                    />
+                    <h3>Lula</h3>
+                    <p>{votes.lula || 0} votos</p>
+                    <button
+                        className="vote-button"
+                        onClick={() => handleVote("lula")}
+                        // Desabilita se não estiver autenticado OU se já tiver votado
+                        disabled={!isAuthenticated || (user && user.hasVoted)} 
+                    >
+                        {user && user.votedFor === "lula" ? "Você votou" : "Votar"}
+                    </button>
+                </div>
 
-                <div className="candidate">
-                    <img
-                        src="/images/bolsonaro.webp"
-                        alt="Bolsonaro"
-                        className="candidate-photo"
-                        onError={(e) => (e.target.src = "/images/bolsonaro_fallback.jpg")}
-                    />
-                    <h3>Bolsonaro</h3>
-                    <p>{votes.bolsonaro || 0} votos</p>
-                    <button
-                        className="vote-button"
-                        onClick={() => handleVote("bolsonaro")}
-                        disabled={!isAuthenticated || (user && user.hasVoted)} 
-                    >
-                        {user?.votedFor === "bolsonaro" ? "Você votou" : "Votar"}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+                <div className="candidate">
+                    <img
+                        src="/images/bolsonaro.webp"
+                        alt="Bolsonaro"
+                        className="candidate-photo"
+                        onError={(e) => (e.target.src = "/images/bolsonaro_fallback.jpg")}
+                    />
+                    <h3>Bolsonaro</h3>
+                    <p>{votes.bolsonaro || 0} votos</p>
+                    <button
+                        className="vote-button"
+                        onClick={() => handleVote("bolsonaro")}
+                        disabled={!isAuthenticated || (user && user.hasVoted)} 
+                    >
+                        {user && user.votedFor === "bolsonaro" ? "Você votou" : "Votar"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 }
