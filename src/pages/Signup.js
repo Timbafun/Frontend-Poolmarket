@@ -31,7 +31,7 @@ export default function Signup() {
       const data = await response.json();
 
       if (response.ok) { 
-        alert(data.message || "Cadastro efetuado com sucesso!"); // Usa a mensagem do Backend ou fallback
+        alert(data.message || "✅ Cadastro efetuado com sucesso!"); // Usa a mensagem do Backend ou fallback
         navigate("/"); // FORÇA O REDIRECIONAMENTO
       } else {
         alert(data.message || "Erro ao cadastrar usuário. Tente novamente.");
