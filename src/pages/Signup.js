@@ -43,17 +43,17 @@ export default function Signup() {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Cadastro</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Nome completo" onChange={(e) => setForm({ ...form, nome: e.target.value })} />
-        <input type="email" placeholder="E-mail" onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        <input type="text" placeholder="Telefone" onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
-        <input type="text" placeholder="CPF" onChange={(e) => setForm({ ...form, cpf: e.target.value })} />
-        <input type="password" placeholder="Senha" onChange={(e) => setForm({ ...form, senha: e.target.value })} />
-        <input type="password" placeholder="Confirmar senha" onChange={(e) => setForm({ ...form, confirmar: e.target.value })} />
-        <button type="submit" className="auth-button">Cadastrar</button>
-      </form>
-    </div>
-  );
+    <div className="auth-container">
+      <h2>Cadastro</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Nome completo" onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+        <input type="email" placeholder="E-mail" onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        <input type="text" placeholder="Telefone" onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+        <input type="text" placeholder="CPF" onChange={(e) => setForm({ ...form, cpf: e.target.value })} />
+        <input type="password" placeholder="Senha" onChange={(e) => setForm({ ...form, senha: e.target.value })} />
+        <input type="password" placeholder="Confirmar senha" onChange={(e) => setForm({ ...form, confirmar: e.target.value })} />
+        <button type="submit" className="auth-button">Cadastrar</button>
+      </form>
+    </div>
+  );
 }
